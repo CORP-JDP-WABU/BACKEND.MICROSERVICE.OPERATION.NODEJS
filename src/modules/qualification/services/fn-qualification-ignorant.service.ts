@@ -19,12 +19,14 @@ export class FnQualificationIgnorantService {
 
     async execute(idCourse: string, idTeacher: string, userDecorator: any) {
 
+        const { idStudent } = userDecorator
+
         this.logger.debug(
             `::executeUniversity::parameters::${idCourse}-${idTeacher}`,
           );
 
         const careerCourseTeacherForStudent = await this.careerCourseTeacherModel.findOne({
-            idStudent: new mongoose.Types.ObjectId("5dd5810bd0ac9a5827633bfd"),
+            idStudent: new mongoose.Types.ObjectId(idStudent),
             "pendingToQualification.course.idCourse": idCourse,
             "pendingToQualification.teacher.idTeacher": idTeacher  
         });
