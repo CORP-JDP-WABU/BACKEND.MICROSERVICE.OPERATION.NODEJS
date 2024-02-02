@@ -11,23 +11,28 @@ import { SecurityModule } from 'src/common/client/security/security.module';
 @Module({
   imports: [
     MongooseModule.forFeature([
-        {
-            name: schemas.CareerCourseTeacher.name,
-            schema: schemas.CareerCourseTeacherSchema,
-          },
+      {
+        name: schemas.CareerCourseTeacher.name,
+        schema: schemas.CareerCourseTeacherSchema,
+      },
+      {
+        name: schemas.UniversityTeacher.name,
+        schema: schemas.UniversityTeacherSchema,
+      },
     ]),
     SecurityModule.registerAsync({
-        global: true,
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) =>
-          configService.get('client.security'),
-        inject: [ConfigService],
-      }),
-      CryptoModule
-    ],
+      global: true,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) =>
+        configService.get('client.security'),
+      inject: [ConfigService],
+    }),
+    CryptoModule,
+  ],
   controllers: [QualificationController],
   providers: [
     services.FnQualificationIgnorantService,
+    services.FnQualificationService,
   ],
 })
 export class QualificationModule {}

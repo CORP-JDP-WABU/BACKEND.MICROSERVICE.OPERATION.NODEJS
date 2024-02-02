@@ -23,9 +23,7 @@ import { CryptoModule } from './common/crypto/crypto.module';
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([
-
-    ]),
+    MongooseModule.forFeature([]),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -43,7 +41,6 @@ import { CryptoModule } from './common/crypto/crypto.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-
   ],
 })
 export class AppModule {}

@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 import { HttpCustomException } from './exception/http-custom.exception';
 
 async function bootstrap() {
-  const aplicationNestName = '::microservice-dashboard::';
+  const aplicationNestName = '::microservice-operation::';
 
   const logger = new Logger(aplicationNestName);
   const app = await NestFactory.create(AppModule);

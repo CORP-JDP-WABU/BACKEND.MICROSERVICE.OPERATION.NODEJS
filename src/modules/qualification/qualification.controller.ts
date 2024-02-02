@@ -1,7 +1,14 @@
-import { Controller, Post, Body, UseGuards, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Patch,
+  Param,
+} from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import {
-    ApiBearerAuth,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -9,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 
 import * as response from 'src/common/dto';
+import * as request from './dto';
 import * as exception from 'src/exception';
 import * as services from './services';
 import { SecurityGuard } from 'src/common/guard';
@@ -22,6 +30,7 @@ import { UserDecorator } from 'src/common/decorator';
 export class QualificationController {
   constructor(
     private readonly fnQualificationIgnorantService: services.FnQualificationIgnorantService,
+    private readonly fnQualificationService: services.FnQualificationService,
   ) {}
 
   @UseGuards(ThrottlerGuard)
@@ -42,12 +51,47 @@ export class QualificationController {
   @ApiInternalServerErrorResponse({
     description: 'The register ignorant has been failed by qualification.',
   })
-  qualificationIfnorant(
-   @Param('idCourse') idCourse: string,
-   @Param('idTeacher') idTeacher: string,
-   @UserDecorator() userDecorator: UserDecoratorInterface,
+  qualificationIgnorant(
+    @Param('idCourse') idCourse: string,
+    @Param('idTeacher') idTeacher: string,
+    @UserDecorator() userDecorator: UserDecoratorInterface,
   ): Promise<response.ResponseGenericDto> {
-    return this.fnQualificationIgnorantService.execute(idCourse, idTeacher, userDecorator);
+    return this.fnQualificationIgnorantService.execute(
+      idCourse,
+      idTeacher,
+      userDecorator,
+    );
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle()
+  @Patch('/course/:idCourse/teacher/:idTeacher')
+  @ApiCreatedResponse({
+    description: 'The register has been successfully qualification.',
+    type: response.ResponseGenericDto,
+  })
+  @ApiConflictResponse({
+    description: 'The register has been successfully qualification.',
+    type: null,
+  })
+  @ApiConflictResponse({
+    description: 'The register has been failed qualification.',
+    type: null,
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'The register has been failed by qualification.',
+  })
+  qualification(
+    @Param('idCourse') idCourse: string,
+    @Param('idTeacher') idTeacher: string,
+    @Body() requestQualificationDto: request.RequestQualificationDto,
+    @UserDecorator() userDecorator: UserDecoratorInterface,
+  ): Promise<response.ResponseGenericDto> {
+    return this.fnQualificationService.execute(
+      idCourse,
+      idTeacher,
+      userDecorator,
+      requestQualificationDto,
+    );
+  }
 }

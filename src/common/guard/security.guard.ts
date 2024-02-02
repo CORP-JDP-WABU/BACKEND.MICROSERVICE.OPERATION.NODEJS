@@ -19,7 +19,7 @@ export class SecurityGuard implements CanActivate {
 
     const requestUnauthorized = request.headers.authorization;
 
-    if(requestUnauthorized == undefined || requestUnauthorized == null) {
+    if (requestUnauthorized == undefined || requestUnauthorized == null) {
       throw new UnauthorizedException('not exist token in header');
     }
 
