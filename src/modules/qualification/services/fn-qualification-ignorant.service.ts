@@ -29,7 +29,7 @@ export class FnQualificationIgnorantService {
       });
 
     if (!careerCourseTeacherForStudent) {
-      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException();
+      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(`QUALIFICATION_NOT_EXISTS_STUDENT`);
     }
 
     careerCourseTeacherForStudent.pendingToQualification =

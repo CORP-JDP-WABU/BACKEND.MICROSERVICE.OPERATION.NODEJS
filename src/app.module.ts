@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import configuration from './config/configuration';
 import { QualificationModule } from './modules/qualification/qualification.module';
 import { CryptoModule } from './common/crypto/crypto.module';
+import { CommentModule } from './modules/comment/comment.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CryptoModule } from './common/crypto/crypto.module';
       }),
     }),
     QualificationModule,
+    CommentModule,
     CryptoModule,
   ],
   controllers: [AppController],
