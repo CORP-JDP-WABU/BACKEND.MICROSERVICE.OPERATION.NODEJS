@@ -41,12 +41,21 @@ export class FnQualificationService {
       throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(`QUALIFICATION_NOT_EXISTS_STUDENT`);
     }
 
+    const hasQualificationUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
+      (elemento) =>
+        elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
+    );
+    
+    hasQualificationUpdate.hasQualification = true;
+
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
         (elemento) =>
           elemento.course.idCourse !== idCourse &&
           elemento.teacher.idTeacher !== idTeacher,
       );
+
+    careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
 
     await careerCourseTeacherForStudent.save();
 

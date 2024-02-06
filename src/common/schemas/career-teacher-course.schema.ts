@@ -30,6 +30,8 @@ export class CareerCourseTeacher {
             lastName: String,
             photoUrl: String,
           },
+          hasComment: Boolean,
+          hasQualification: Boolean
         },
       ],
     }),
@@ -45,6 +47,8 @@ export class CareerCourseTeacher {
       lastName: string;
       photoUrl: string;
     };
+    hasComment: boolean;
+    hasQualification: boolean;
   }[];
 
   @Prop({
