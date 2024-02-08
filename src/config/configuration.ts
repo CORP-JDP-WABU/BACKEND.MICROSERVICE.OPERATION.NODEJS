@@ -24,8 +24,7 @@ export default () => ({
   client: {
     security: {
       host: process.env.CLIENT_SECURITY_HOST,
-      port: process.env.CLIENT_SECURITY_PORT
-    }
-  }
-  
+      port: process.env.CLIENT_SECURITY_PORT,
+    },
+  },
 });

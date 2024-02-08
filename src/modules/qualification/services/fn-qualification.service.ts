@@ -38,14 +38,18 @@ export class FnQualificationService {
       });
 
     if (!careerCourseTeacherForStudent) {
-      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(`QUALIFICATION_NOT_EXISTS_STUDENT`);
+      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
+        `QUALIFICATION_NOT_EXISTS_STUDENT`,
+      );
     }
 
-    const hasQualificationUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
-      (elemento) =>
-        elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
-    );
-    
+    const hasQualificationUpdate =
+      careerCourseTeacherForStudent.pendingToQualification.find(
+        (elemento) =>
+          elemento.course.idCourse == idCourse &&
+          elemento.teacher.idTeacher == idTeacher,
+      );
+
     hasQualificationUpdate.hasQualification = true;
 
     careerCourseTeacherForStudent.pendingToQualification =
@@ -55,7 +59,9 @@ export class FnQualificationService {
           elemento.teacher.idTeacher !== idTeacher,
       );
 
-    careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
+    careerCourseTeacherForStudent.pendingToQualification.push(
+      hasQualificationUpdate,
+    );
 
     await careerCourseTeacherForStudent.save();
 
@@ -79,7 +85,6 @@ export class FnQualificationService {
     idTeacher: string,
     requestQualificationDto: request.RequestQualificationDto,
   ) {
-
     const { required } = requestQualificationDto;
 
     const universityTeacher = await this.universityTeacherModel.findById(
@@ -147,9 +152,20 @@ export class FnQualificationService {
       );
 
       if (operationQualificationMany.length > 0) {
-        const averageQualification = (required.learn + required.hight + required.goodPeople);  
-        const newAverageQualification = this.calculateQualificationAverageNotRound(course.manyAverageQualifications, averageQualification);
-        operationQualificationMany.push(this.generateRequiredAverage(idTeacher, idCourse, newAverageQualification));
+        const averageQualification =
+          required.learn + required.hight + required.goodPeople;
+        const newAverageQualification =
+          this.calculateQualificationAverageNotRound(
+            course.manyAverageQualifications,
+            averageQualification,
+          );
+        operationQualificationMany.push(
+          this.generateRequiredAverage(
+            idTeacher,
+            idCourse,
+            newAverageQualification,
+          ),
+        );
         await this.universityTeacherModel.bulkWrite(operationQualificationMany);
         operationQualificationMany = [];
       }
@@ -215,7 +231,9 @@ export class FnQualificationService {
         }
 
         if (operationQualificationMany.length > 0) {
-          await this.universityTeacherModel.bulkWrite(operationQualificationMany);
+          await this.universityTeacherModel.bulkWrite(
+            operationQualificationMany,
+          );
           operationQualificationMany = [];
         }
       }
@@ -223,7 +241,6 @@ export class FnQualificationService {
       this.createUniversityTeacherQualification();
     }
   }
-
 
   private async createUniversityTeacherQualification() {}
 
@@ -243,11 +260,12 @@ export class FnQualificationService {
           $set: {
             'courses.$[course].optionalQualifications.$[oq].averageQualification':
               averageQualification,
-          }
+          },
         },
         arrayFilters: [
           { 'course._id': new mongoose.Types.ObjectId(idCourse) },
-          { 'oq.qualification.code': qualificationCode }],
+          { 'oq.qualification.code': qualificationCode },
+        ],
       },
     };
   }
@@ -272,41 +290,49 @@ export class FnQualificationService {
         },
         arrayFilters: [
           { 'course._id': new mongoose.Types.ObjectId(idCourse) },
-          { 'oq.qualification.code': qualificationCode }],
+          { 'oq.qualification.code': qualificationCode },
+        ],
       },
     };
   }
 
-  private generateRequiredAverage(    idTeacher: string,
-    idCourse: string, averageQualifiction: number) {
-      return {
-        updateOne: {
-          filter: {
-            _id: new mongoose.Types.ObjectId(idTeacher),
-            'courses._id': new mongoose.Types.ObjectId(idCourse),
-          },
-          update: {
-            $set: {
-              'courses.$[course].manyAverageQualifications':  averageQualifiction
-            },
-            $inc: {
-              'courses.$[course].manyQualifications':  1
-            }
-          },
-          arrayFilters: [
-            { 'course._id': new mongoose.Types.ObjectId(idCourse) }
-          ]
+  private generateRequiredAverage(
+    idTeacher: string,
+    idCourse: string,
+    averageQualifiction: number,
+  ) {
+    return {
+      updateOne: {
+        filter: {
+          _id: new mongoose.Types.ObjectId(idTeacher),
+          'courses._id': new mongoose.Types.ObjectId(idCourse),
         },
-      };
+        update: {
+          $set: {
+            'courses.$[course].manyAverageQualifications': averageQualifiction,
+          },
+          $inc: {
+            'courses.$[course].manyQualifications': 1,
+          },
+        },
+        arrayFilters: [{ 'course._id': new mongoose.Types.ObjectId(idCourse) }],
+      },
+    };
   }
 
-  private calculateQualificationAverageRound(oldAverage: number, newValue: number) {
+  private calculateQualificationAverageRound(
+    oldAverage: number,
+    newValue: number,
+  ) {
     const rawAverage = (oldAverage + newValue) / 2;
     return Math.round(rawAverage);
   }
 
-  private calculateQualificationAverageNotRound(oldAverage: number, newValue: number) {
+  private calculateQualificationAverageNotRound(
+    oldAverage: number,
+    newValue: number,
+  ) {
     const rawAverage = (oldAverage + newValue) / 2;
-    return rawAverage
+    return rawAverage;
   }
 }

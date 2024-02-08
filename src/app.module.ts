@@ -37,7 +37,7 @@ import { AnalitycModule } from './modules/analytic/analityc.module';
     QualificationModule,
     CommentModule,
     CryptoModule,
-    AnalitycModule
+    AnalitycModule,
   ],
   controllers: [AppController],
   providers: [

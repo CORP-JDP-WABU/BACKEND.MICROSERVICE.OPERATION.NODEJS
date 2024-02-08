@@ -17,7 +17,7 @@ import { CommentController } from './comment.controller';
       {
         name: schemas.Students.name,
         schema: schemas.StudentsSchema,
-      }
+      },
     ]),
     SecurityModule.registerAsync({
       global: true,
@@ -29,8 +29,6 @@ import { CommentController } from './comment.controller';
     CryptoModule,
   ],
   controllers: [CommentController],
-  providers: [
-    services.FnCommentService
-  ],
+  providers: [services.FnCommentService],
 })
 export class CommentModule {}

@@ -2,11 +2,11 @@ import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AuditPropertiesSchema } from './audit-properties.schema';
 
-export type AnalitycSearchQualificationTeachersDocument = AnalitycSearchQualificationTeachers & mongoose.Document;
+export type AnalitycSearchQualificationTeachersDocument =
+  AnalitycSearchQualificationTeachers & mongoose.Document;
 
 @Schema({ collection: 'AnalitycSearchQualificationTeachers', autoIndex: true })
 export class AnalitycSearchQualificationTeachers {
-
   @Prop({ type: mongoose.Types.ObjectId })
   idUniversity: mongoose.Types.ObjectId;
 
@@ -18,7 +18,7 @@ export class AnalitycSearchQualificationTeachers {
 
   @Prop({ type: Number })
   numberOfRepetitions: number;
-  
+
   @Prop({ type: String })
   module: string;
 
@@ -29,4 +29,5 @@ export class AnalitycSearchQualificationTeachers {
   auditProperties: AuditPropertiesSchema;
 }
 
-export const AnalitycSearchQualificationTeachersSchema = SchemaFactory.createForClass(AnalitycSearchQualificationTeachers);
+export const AnalitycSearchQualificationTeachersSchema =
+  SchemaFactory.createForClass(AnalitycSearchQualificationTeachers);

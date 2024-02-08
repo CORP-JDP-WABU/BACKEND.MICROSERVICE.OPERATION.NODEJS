@@ -4,7 +4,6 @@ import { AnalitycController } from './analityc.controller';
 import * as schemas from 'src/common/schemas';
 import * as services from './services';
 
-
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -15,13 +14,13 @@ import * as services from './services';
       {
         name: schemas.AnalitycSearchQualificationTeachers.name,
         schema: schemas.AnalitycSearchQualificationTeachersSchema,
-      }
-    ])
+      },
+    ]),
   ],
   controllers: [AnalitycController],
   providers: [
     services.FnSearchCourseTeachersService,
-    services.FnSearchQualificationTeachersService
+    services.FnSearchQualificationTeachersService,
   ],
 })
 export class AnalitycModule {}

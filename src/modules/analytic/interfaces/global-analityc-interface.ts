@@ -1,5 +1,5 @@
 export interface IGlobalAnalityc {
-    idUniversity: string;
-    idCareer: string;
-    idStudent: string;
+  idUniversity: string;
+  idCareer: string;
+  idStudent: string;
 }

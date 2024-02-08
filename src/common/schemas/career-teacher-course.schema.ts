@@ -31,7 +31,7 @@ export class CareerCourseTeacher {
             photoUrl: String,
           },
           hasComment: Boolean,
-          hasQualification: Boolean
+          hasQualification: Boolean,
         },
       ],
     }),
