@@ -9,6 +9,7 @@ import configuration from './config/configuration';
 import { QualificationModule } from './modules/qualification/qualification.module';
 import { CryptoModule } from './common/crypto/crypto.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { AnalitycModule } from './modules/analytic/analityc.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { CommentModule } from './modules/comment/comment.module';
     QualificationModule,
     CommentModule,
     CryptoModule,
+    AnalitycModule
   ],
   controllers: [AppController],
   providers: [

@@ -8,6 +8,10 @@ export default () => ({
       limit: process.env.SERVICE_HTTP_THROTTLE_LIMIT,
     },
   },
+  tcp: {
+    host: process.env.SERVICE_TCP_HOST,
+    port: process.env.SERVICE_TCP_PORT,
+  },
   swagger: {
     basePath: process.env.SWAGGER_BASE_PATH,
   },

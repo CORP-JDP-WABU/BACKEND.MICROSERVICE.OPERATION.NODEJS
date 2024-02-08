@@ -25,6 +25,8 @@ jobs:
         echo "Generating .env file"
         echo "SERVICE_HTTP_HOST=0.0.0.0" > .env
         echo "SERVICE_HTTP_PORT=4004" >> .env
+        echo "SERVICE_TCP_HOST=0.0.0.0" >> .env
+        echo "SERVICE_TCP_PORT=40004" >> .env
         echo "SERVICE_BASE_PATH=/api" >> .env
         echo "SERVICE_HTTP_THROTTLE_TTL=60" >> .env
         echo "SERVICE_HTTP_THROTTLE_LIMIT=10" >> .env
@@ -77,5 +79,5 @@ jobs:
           docker rm microservice-operation
           docker rmi ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs
           docker pull ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
-          docker run -d -p 4004:4004 --name microservice-operation ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
+          docker run -d -p 4004:4004 -p 40004:40004  --name microservice-operation ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
           '

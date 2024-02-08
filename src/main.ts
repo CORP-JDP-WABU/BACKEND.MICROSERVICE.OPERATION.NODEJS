@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpCustomException } from './exception/http-custom.exception';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const aplicationNestName = '::microservice-operation::';
@@ -11,6 +12,14 @@ async function bootstrap() {
   const logger = new Logger(aplicationNestName);
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
+
+  app.connectMicroservice({
+    transport: Transport.TCP,
+    options: {
+      host: config.get('tcp.host'),
+      port: config.get('tcp.port'),
+    },
+  });
 
   app.useGlobalFilters(new HttpCustomException(logger));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
