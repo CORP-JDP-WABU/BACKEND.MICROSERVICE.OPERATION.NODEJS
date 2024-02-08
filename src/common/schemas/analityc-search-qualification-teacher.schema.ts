@@ -16,6 +16,9 @@ export class AnalitycSearchQualificationTeachers {
   @Prop({ type: mongoose.Types.ObjectId })
   idStudent: mongoose.Types.ObjectId;
 
+  @Prop({ type: Number })
+  numberOfRepetitions: number;
+  
   @Prop({ type: String })
   module: string;
 
