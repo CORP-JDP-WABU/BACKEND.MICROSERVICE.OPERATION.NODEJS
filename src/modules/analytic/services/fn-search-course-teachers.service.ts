@@ -73,10 +73,8 @@ export class FnSearchCourseTeachersService {
           $set: {
             'auditProperties.dateUpdate': new Date(),
             'auditProperties.userUpdate': `${FnSearchCourseTeachersService.name}`,
-            status: {
-              code: 2,
-              description: '::update::search::course::teacher::',
-            },
+            'status.code': 2,
+            'status.description': '::update::search::course::teacher::'
           },
           $inc: {
             numberOfRepetitions: 1,
