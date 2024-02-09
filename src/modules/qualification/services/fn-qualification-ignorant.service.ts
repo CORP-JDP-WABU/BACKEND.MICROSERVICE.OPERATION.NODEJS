@@ -45,7 +45,7 @@ export class FnQualificationIgnorantService {
 
     this.logger.debug(`::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`)
 
-    await careerCourseTeacherForStudent.save();
+    // await careerCourseTeacherForStudent.save();
 
     return <response.ResponseGenericDto>{
       message: 'Processo exitoso',
