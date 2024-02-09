@@ -39,8 +39,8 @@ export class FnQualificationIgnorantService {
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
         (elemento) =>
-          elemento.course.idCourse !== idCourse &&
-          elemento.teacher.idTeacher !== idTeacher,
+          elemento.course.idCourse.toString() !== idCourse &&
+          elemento.teacher.idTeacher.toString() !== idTeacher,
       );
 
     this.logger.debug(`::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`)
