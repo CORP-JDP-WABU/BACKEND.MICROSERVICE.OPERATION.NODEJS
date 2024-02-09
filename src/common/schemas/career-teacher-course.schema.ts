@@ -20,6 +20,7 @@ export class CareerCourseTeacher {
     raw({
       type: [
         {
+          _id: mongoose.Types.ObjectId,
           course: {
             idCourse: String,
             name: String,
@@ -37,6 +38,7 @@ export class CareerCourseTeacher {
     }),
   )
   pendingToQualification: {
+    _id: mongoose.Types.ObjectId;
     course: {
       idCourse: string;
       name: string;

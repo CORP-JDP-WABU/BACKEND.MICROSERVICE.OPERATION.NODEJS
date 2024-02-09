@@ -13,9 +13,9 @@ export class SecurityService {
   callFxValidateToken<TResult = any, TInput = any>(
     dto: TInput,
   ): Promise<TResult> {
-    this.logger.debug(
+    /*this.logger.debug(
       `execute::callFxValidateToken::params${JSON.stringify(dto)}`,
-    );
+    );*/
     const pattern = { subjet: 'client-security', function: 'validate-token' };
     return this.client.send<TResult, TInput>(pattern, dto).toPromise();
   }
@@ -23,9 +23,9 @@ export class SecurityService {
   callFxConfigStudent<TResult = any, TInput = any>(
     dto: TInput,
   ): Promise<TResult> {
-    this.logger.debug(
+    /*this.logger.debug(
       `execute::callFxConfigStudent::params${JSON.stringify(dto)}`,
-    );
+    );*/
     const pattern = { subjet: 'client-security', function: 'config-student' };
     return this.client.send<TResult, TInput>(pattern, dto).toPromise();
   }

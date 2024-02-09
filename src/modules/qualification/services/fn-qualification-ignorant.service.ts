@@ -35,17 +35,18 @@ export class FnQualificationIgnorantService {
     }
 
     this.logger.debug(`::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`)
-
+    const deletePendingQualification = careerCourseTeacherForStudent.pendingToQualification.find(x => (x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher));
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
         (elemento) =>
-          elemento.course.idCourse.toString() !== idCourse &&
-          elemento.teacher.idTeacher.toString() !== idTeacher,
+          (
+            elemento._id != deletePendingQualification._id
+          )
       );
 
     this.logger.debug(`::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`)
 
-    // await careerCourseTeacherForStudent.save();
+    await careerCourseTeacherForStudent.save();
 
     return <response.ResponseGenericDto>{
       message: 'Processo exitoso',
