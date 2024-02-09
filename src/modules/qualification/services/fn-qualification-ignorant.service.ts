@@ -18,7 +18,7 @@ export class FnQualificationIgnorantService {
     const { idStudent } = userDecorator;
 
     this.logger.debug(
-      `::executeUniversity::parameters::${idCourse}-${idTeacher}`,
+      `::execute::parameters::${idCourse}-${idTeacher}`,
     );
 
     const careerCourseTeacherForStudent =
@@ -34,12 +34,16 @@ export class FnQualificationIgnorantService {
       );
     }
 
+    this.logger.debug(`::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`)
+
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
         (elemento) =>
           elemento.course.idCourse !== idCourse &&
           elemento.teacher.idTeacher !== idTeacher,
       );
+
+    this.logger.debug(`::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`)
 
     await careerCourseTeacherForStudent.save();
 
