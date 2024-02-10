@@ -17,9 +17,7 @@ export class FnQualificationIgnorantService {
   async execute(idCourse: string, idTeacher: string, userDecorator: any) {
     const { idStudent } = userDecorator;
 
-    this.logger.debug(
-      `::execute::parameters::${idCourse}-${idTeacher}`,
-    );
+    this.logger.debug(`::execute::parameters::${idCourse}-${idTeacher}`);
 
     const careerCourseTeacherForStudent =
       await this.careerCourseTeacherModel.findOne({
@@ -34,17 +32,22 @@ export class FnQualificationIgnorantService {
       );
     }
 
-    this.logger.debug(`::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`)
-    const deletePendingQualification = careerCourseTeacherForStudent.pendingToQualification.find(x => (x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher));
+    this.logger.debug(
+      `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+    );
+    const deletePendingQualification =
+      careerCourseTeacherForStudent.pendingToQualification.find(
+        (x) =>
+          x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher,
+      );
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
-        (elemento) =>
-          (
-            elemento._id != deletePendingQualification._id
-          )
+        (elemento) => elemento._id != deletePendingQualification._id,
       );
 
-    this.logger.debug(`::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`)
+    this.logger.debug(
+      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+    );
 
     await careerCourseTeacherForStudent.save();
 

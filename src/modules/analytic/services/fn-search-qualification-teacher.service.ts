@@ -75,7 +75,7 @@ export class FnSearchQualificationTeachersService {
             'auditProperties.dateUpdate': new Date(),
             'auditProperties.userUpdate': `${FnSearchQualificationTeachersService.name}`,
             'status.code': 2,
-            'status.description': '::update::search::qualification::teacher::'
+            'status.description': '::update::search::qualification::teacher::',
           },
           $inc: {
             numberOfRepetitions: 1,

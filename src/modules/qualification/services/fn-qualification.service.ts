@@ -52,17 +52,22 @@ export class FnQualificationService {
 
     hasQualificationUpdate.hasQualification = true;
 
-    this.logger.debug(`::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`)
-    const deletePendingQualification = careerCourseTeacherForStudent.pendingToQualification.find(x => (x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher));
+    this.logger.debug(
+      `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+    );
+    const deletePendingQualification =
+      careerCourseTeacherForStudent.pendingToQualification.find(
+        (x) =>
+          x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher,
+      );
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
-        (elemento) =>
-          (
-            elemento._id != deletePendingQualification._id
-          )
+        (elemento) => elemento._id != deletePendingQualification._id,
       );
 
-    this.logger.debug(`::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`)
+    this.logger.debug(
+      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+    );
 
     careerCourseTeacherForStudent.pendingToQualification.push(
       hasQualificationUpdate,
@@ -105,6 +110,7 @@ export class FnQualificationService {
     const requiredOptionalQualifications = course.optionalQualifications;
 
     if (requiredQualifications.length > 0) {
+      /*
       const lern = requiredQualifications.find(
         (required) =>
           required.qualification.code == QUALIFICATION.REQUIRED.LEARN,
@@ -155,6 +161,16 @@ export class FnQualificationService {
           averageGood,
         ),
       );
+      */
+
+      this.processRequiredQualifications(
+        requiredQualifications,
+        operationQualificationMany,
+        requestQualificationDto,
+        idTeacher,
+        idCourse,
+        this.geneateRequiredQualificationMany.bind(this),
+      );
 
       if (operationQualificationMany.length > 0) {
         const averageQualification =
@@ -178,7 +194,7 @@ export class FnQualificationService {
       if (requiredOptionalQualifications.length > 0) {
         const { optional } = requestQualificationDto;
         const { assistance, late, worked } = optional;
-        if (assistance > 0) {
+        /*if (assistance > 0) {
           const optionalAssistance = requiredOptionalQualifications.find(
             (required) =>
               required.qualification.code == QUALIFICATION.OPTIONAL.ASSISTANCE,
@@ -233,8 +249,16 @@ export class FnQualificationService {
               averageWork,
             ),
           );
-        }
+        }*/
 
+        this.processOptionalQualifications(
+          optional,
+          operationQualificationMany,
+          requiredOptionalQualifications,
+          idTeacher,
+          idCourse,
+          this.geneateOptionalQualificationMany.bind(this),
+        );
         if (operationQualificationMany.length > 0) {
           await this.universityTeacherModel.bulkWrite(
             operationQualificationMany,
@@ -339,5 +363,83 @@ export class FnQualificationService {
   ) {
     const rawAverage = (oldAverage + newValue) / 2;
     return rawAverage;
+  }
+
+  private processRequiredQualifications(
+    requiredQualifications: any[],
+    operationQualificationMany: any[],
+    requestQualificationDto: request.RequestQualificationDto,
+    idTeacher: string,
+    idCourse: string,
+    generateFunction: (
+      idTeacher: string,
+      idCourse: string,
+      code: number,
+      average: number,
+    ) => any,
+  ) {
+    const qualificationMapping = [
+      { code: QUALIFICATION.REQUIRED.LEARN, attribute: 'learn' },
+      { code: QUALIFICATION.REQUIRED.HIGHT, attribute: 'hight' },
+      { code: QUALIFICATION.REQUIRED.GOOD_PEOPLE, attribute: 'goodPeople' },
+    ];
+
+    qualificationMapping.forEach(({ code, attribute }) => {
+      const qualification = requiredQualifications.find(
+        (q) => q.qualification.code === code,
+      );
+
+      if (qualification) {
+        const average = this.calculateQualificationAverageRound(
+          qualification.averageQualification,
+          requestQualificationDto.required[attribute],
+        );
+
+        operationQualificationMany.push(
+          generateFunction(idTeacher, idCourse, code, average),
+        );
+      }
+    });
+  }
+
+  private processOptionalQualifications(
+    optionalDto: any,
+    qualifications: any[],
+    operationQualificationMany: any[],
+    idTeacher: string,
+    idCourse: string,
+    generateFunction: (
+      idTeacher: string,
+      idCourse: string,
+      code: number,
+      average: number,
+    ) => any,
+  ) {
+    const optionalQualificationsMapping = [
+      { code: QUALIFICATION.OPTIONAL.ASSISTANCE, attribute: 'assistance' },
+      { code: QUALIFICATION.OPTIONAL.LATE, attribute: 'late' },
+      { code: QUALIFICATION.OPTIONAL.WORKED, attribute: 'worked' },
+    ];
+
+    optionalQualificationsMapping.forEach(({ code, attribute }) => {
+      const value = optionalDto[attribute];
+
+      if (value > 0) {
+        const qualification = qualifications.find(
+          (q) => q.qualification.code === code,
+        );
+
+        if (qualification) {
+          const average = this.calculateQualificationAverageRound(
+            qualification.averageQualification,
+            value,
+          );
+
+          operationQualificationMany.push(
+            generateFunction(idTeacher, idCourse, code, average),
+          );
+        }
+      }
+    });
   }
 }
