@@ -52,12 +52,17 @@ export class FnQualificationService {
 
     hasQualificationUpdate.hasQualification = true;
 
+    this.logger.debug(`::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`)
+    const deletePendingQualification = careerCourseTeacherForStudent.pendingToQualification.find(x => (x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher));
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
         (elemento) =>
-          elemento.course.idCourse !== idCourse &&
-          elemento.teacher.idTeacher !== idTeacher,
+          (
+            elemento._id != deletePendingQualification._id
+          )
       );
+
+    this.logger.debug(`::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`)
 
     careerCourseTeacherForStudent.pendingToQualification.push(
       hasQualificationUpdate,
