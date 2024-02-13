@@ -23,6 +23,8 @@ export class FnCommentService {
     comment: string,
   ) {
     const { idStudent } = userDecorator;
+    
+    this.logger.debug(`::execute::parameters::${idCourse}-${idTeacher}-${idStudent}-${comment}`);
 
     const teacherCourseComment = await this.teacherCourseCommentModel.findOne({
       idCourse: mongoose.Types.ObjectId(idCourse),
