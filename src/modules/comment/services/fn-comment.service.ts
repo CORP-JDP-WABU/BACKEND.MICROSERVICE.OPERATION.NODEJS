@@ -14,6 +14,8 @@ export class FnCommentService {
     private readonly studentModel: mongoose.Model<schemas.StudentsDocument>,
     @InjectModel(schemas.TeacherCourseComments.name)
     private readonly teacherCourseCommentModel: mongoose.Model<schemas.TeacherCourseCommentsDocument>,
+    @InjectModel(schemas.CareerCourseTeacher.name)
+    private readonly careerCourseTeacherModel: mongoose.Model<schemas.CareerCourseTeacherDocument>,
   ) {}
 
   async execute(
@@ -23,8 +25,10 @@ export class FnCommentService {
     comment: string,
   ) {
     const { idStudent } = userDecorator;
-    
-    this.logger.debug(`::execute::parameters::${idCourse}-${idTeacher}-${idStudent}-${comment}`);
+
+    this.logger.debug(
+      `::execute::parameters::${idCourse}-${idTeacher}-${idStudent}-${comment}`,
+    );
 
     const teacherCourseComment = await this.teacherCourseCommentModel.findOne({
       idCourse: mongoose.Types.ObjectId(idCourse),
@@ -43,6 +47,8 @@ export class FnCommentService {
         `COMMENT_NOT_EXIST_STUDENT`,
       );
     }
+
+    await this.updateHasCommenInQualification(idStudent, idCourse, idTeacher);
 
     if (!teacherCourseComment) {
       return this.createCommentInCourseTeacher(
@@ -93,6 +99,45 @@ export class FnCommentService {
     await this.teacherCourseCommentModel.create(newTeacherCourseComment);
 
     return this.heandleReturn(true);
+  }
+
+  private async updateHasCommenInQualification(
+    idStudent: string,
+    idCourse: string,
+    idTeacher: string,
+  ) {
+    const careerCourseTeacherForStudent =
+      await this.careerCourseTeacherModel.findOne({
+        idStudent: new mongoose.Types.ObjectId(idStudent),
+        'pendingToQualification.course.idCourse': idCourse,
+        'pendingToQualification.teacher.idTeacher': idTeacher,
+      });
+
+    if (!careerCourseTeacherForStudent) {
+      throw new exception.NotExistStudentCareerCourseTeacherCustomException(
+        `QUALIFICATION_NOT_EXISTS_STUDENT`,
+      );
+    }
+
+    const hasCommentUpdate =
+      careerCourseTeacherForStudent.pendingToQualification.find(
+        (elemento) =>
+          elemento.course.idCourse == idCourse &&
+          elemento.teacher.idTeacher == idTeacher,
+      );
+
+    hasCommentUpdate.hasComment = true;
+
+    careerCourseTeacherForStudent.pendingToQualification =
+      careerCourseTeacherForStudent.pendingToQualification.filter(
+        (elemento) => elemento._id != hasCommentUpdate._id,
+      );
+
+    this.logger.debug(
+      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+    );
+
+    await careerCourseTeacherForStudent.save();
   }
 
   private heandleReturn(isCommentCreate: boolean) {

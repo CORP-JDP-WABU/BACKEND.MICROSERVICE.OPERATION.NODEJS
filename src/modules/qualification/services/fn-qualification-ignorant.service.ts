@@ -35,14 +35,18 @@ export class FnQualificationIgnorantService {
     this.logger.debug(
       `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`,
     );
-    const deletePendingQualification =
+    const hasIgnorantUpdate =
       careerCourseTeacherForStudent.pendingToQualification.find(
-        (x) =>
-          x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher,
+        (elemento) =>
+          elemento.course.idCourse == idCourse &&
+          elemento.teacher.idTeacher == idTeacher,
       );
+
+    hasIgnorantUpdate.hasIgnor = true;
+
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
-        (elemento) => elemento._id != deletePendingQualification._id,
+        (elemento) => elemento._id != hasIgnorantUpdate._id,
       );
 
     this.logger.debug(

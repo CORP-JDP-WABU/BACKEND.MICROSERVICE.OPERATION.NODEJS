@@ -55,14 +55,10 @@ export class FnQualificationService {
     this.logger.debug(
       `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`,
     );
-    const deletePendingQualification =
-      careerCourseTeacherForStudent.pendingToQualification.find(
-        (x) =>
-          x.course.idCourse == idCourse && x.teacher.idTeacher == idTeacher,
-      );
+
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
-        (elemento) => elemento._id != deletePendingQualification._id,
+        (elemento) => elemento._id != hasQualificationUpdate._id,
       );
 
     this.logger.debug(
