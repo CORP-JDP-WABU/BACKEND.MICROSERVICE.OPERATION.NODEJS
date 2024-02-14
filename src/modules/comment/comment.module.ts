@@ -15,6 +15,10 @@ import { CommentController } from './comment.controller';
         schema: schemas.TeacherCourseCommentsSchema,
       },
       {
+        name: schemas.CareerCourseTeacher.name,
+        schema: schemas.CareerCourseTeacherSchema,
+      },
+      {
         name: schemas.Students.name,
         schema: schemas.StudentsSchema,
       },
