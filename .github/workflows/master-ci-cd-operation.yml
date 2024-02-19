@@ -1,11 +1,11 @@
-name: ci_cd_operation
+name: master-ci-cd-operation
 
 on:
   push:
-    branches: [develop]
+    branches: [release/v3.0.0]
     
   pull_request:
-    branches: [develop]
+    branches: [release/v3.0.0]
 
 jobs:
   build_and_push:
@@ -31,10 +31,10 @@ jobs:
         echo "SERVICE_HTTP_THROTTLE_TTL=60" >> .env
         echo "SERVICE_HTTP_THROTTLE_LIMIT=10" >> .env
         echo "SWAGGER_BASE_PATH=/api/microservice-operation" >> .env
-        echo "DATABASE_MONGO_HOSTNAME=${{ secrets.ENV_DATABASE_MONGO_HOSTNAME }}" >> .env
-        echo "DATABASE_MONGO_USER=${{ secrets.ENV_DATABASE_MONGO_USER }}" >> .env
-        echo "DATABASE_MONGO_PASSWORD=${{ secrets.ENV_DATABASE_MONGO_PASSWORD }}" >> .env
-        echo "DATABASE_MONGO_NAME=${{ secrets.ENV_DATABASE_MONGO_NAME }}" >> .env
+        echo "DATABASE_MONGO_HOSTNAME=${{ secrets.MASTER_ENV_DATABASE_MONGO_HOSTNAME }}" >> .env
+        echo "DATABASE_MONGO_USER=${{ secrets.MASTER_ENV_DATABASE_MONGO_USER }}" >> .env
+        echo "DATABASE_MONGO_PASSWORD=${{ secrets.MASTER_ENV_DATABASE_MONGO_PASSWORD }}" >> .env
+        echo "DATABASE_MONGO_NAME=${{ secrets.MASTER_ENV_DATABASE_MONGO_NAME }}" >> .env
         echo "CLIENT_SECURITY_HOST=172.17.0.5" >> .env
         echo "CLIENT_SECURITY_PORT=40000" >> .env
 
@@ -65,9 +65,9 @@ jobs:
 
     - name: Build & Deploy
       env:
-        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        HOSTNAME: ${{secrets.EC2_SSH_HOST}}
-        USER_NAME: ${{secrets.EC2_SSH_USERNAME}}
+        PRIVATE_KEY: ${{ secrets.MASTER_EC2_SSH_PRIVATE_KEY }}
+        HOSTNAME: ${{secrets.MASTER_EC2_SSH_HOST}}
+        USER_NAME: ${{secrets.MASTER_EC2_SSH_USERNAME}}
 
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
@@ -79,5 +79,5 @@ jobs:
           docker rm microservice-operation
           docker rmi ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs
           docker pull ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
-          docker run -d -p 4004:4004 -p 40004:40004  --name microservice-operation ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
+          docker run -d -p 4004:4004 -p 40004:40004 --cpus 0.4 -m 700m --name microservice-operation ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
           '
