@@ -16,6 +16,8 @@ export class FnCommentService {
     private readonly teacherCourseCommentModel: mongoose.Model<schemas.TeacherCourseCommentsDocument>,
     @InjectModel(schemas.CareerCourseTeacher.name)
     private readonly careerCourseTeacherModel: mongoose.Model<schemas.CareerCourseTeacherDocument>,
+    @InjectModel(schemas.UniversityTeacher.name)
+    private readonly universityTeacherModel: mongoose.Model<schemas.UniversityTeacherDocument>,
   ) {}
 
   async execute(
@@ -62,14 +64,25 @@ export class FnCommentService {
     const studentComment = await this.generateStudentComments(student, comment);
     teacherCourseComment.students.push(studentComment);
     await teacherCourseComment.save();
+    this.updateTeacherCourseCommentIncrement(idTeacher, idCourse);
     return this.heandleReturn(false);
+  }
+
+  private formatDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // ¡Recuerda que los meses en JavaScript son 0-indexados!
+    const year = date.getFullYear().toString();
+    return `${day}/${month}/${year}`;
   }
 
   private async generateStudentComments(student: any, comment: string) {
     return {
       _id: student._id,
       fullName: `${student.firstName} ${student.lastName}`,
+      profileUrl: student.profileUrl,
       comment,
+      createdAt: new Date(),
+      createdAtString: this.formatDate(new Date()),
       likes: [],
       dislikes: [],
     };
@@ -138,6 +151,27 @@ export class FnCommentService {
     );
 
     await careerCourseTeacherForStudent.save();
+  }
+
+  private async updateTeacherCourseCommentIncrement(idTeacher: string, idCourse: string) {
+    await this.universityTeacherModel.bulkWrite([
+      {
+        updateOne: {
+          filter: {
+            _id: new mongoose.Types.ObjectId(idTeacher),
+            'courses._id': new mongoose.Types.ObjectId(idCourse),
+          },
+          update: {
+            $inc: {
+              'courses.$[course].manyComments': 1,
+            },
+          },
+          arrayFilters: [
+            { 'course._id': new mongoose.Types.ObjectId(idCourse) }
+          ],
+        },
+      }
+    ])
   }
 
   private heandleReturn(isCommentCreate: boolean) {

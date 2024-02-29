@@ -22,7 +22,10 @@ export class TeacherCourseComments {
         {
           _id: mongoose.Types.ObjectId,
           fullName: String,
+          profileUrl: String,
           comment: String,
+          createdAt: Date,
+          createdAtString: String,
           likes: [String],
           dislikes: [String],
         },
@@ -32,7 +35,10 @@ export class TeacherCourseComments {
   students: {
     _id: mongoose.Types.ObjectId;
     fullName: string;
+    profileUrl: string;
     comment: string;
+    createdAt: Date;
+    createdAtString: string;
     likes: string[];
     dislikes: string[];
   }[];

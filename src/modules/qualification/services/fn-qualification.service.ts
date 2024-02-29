@@ -247,7 +247,7 @@ export class FnQualificationService {
     oldAverage: number,
     newValue: number,
   ) {
-    const rawAverage = (newValue == 0) ? oldAverage : (oldAverage + newValue) / 2;
+    const rawAverage = (newValue == 0) ? oldAverage : (oldAverage == 0) ? newValue : (oldAverage + newValue) / 2;
     return Number(rawAverage.toFixed(2));
   }
 
@@ -255,7 +255,7 @@ export class FnQualificationService {
     oldAverage: number,
     newValue: number,
   ) {
-    const rawAverage = (newValue == 0) ? oldAverage : (oldAverage + newValue) / 2;
+    const rawAverage = (newValue == 0) ? oldAverage  : (oldAverage == 0) ? newValue : (oldAverage + newValue) / 2;
     return rawAverage;
   }
 

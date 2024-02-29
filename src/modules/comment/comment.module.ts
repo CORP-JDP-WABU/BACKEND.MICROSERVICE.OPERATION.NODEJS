@@ -11,6 +11,10 @@ import { CommentController } from './comment.controller';
   imports: [
     MongooseModule.forFeature([
       {
+        name: schemas.UniversityTeacher.name,
+        schema: schemas.UniversityTeacherSchema
+      },
+      {
         name: schemas.TeacherCourseComments.name,
         schema: schemas.TeacherCourseCommentsSchema,
       },
