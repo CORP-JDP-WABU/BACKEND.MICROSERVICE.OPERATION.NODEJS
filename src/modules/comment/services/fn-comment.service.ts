@@ -42,6 +42,7 @@ export class FnCommentService {
       firstName: 1,
       lastName: 1,
       university: 1,
+      profileUrln: 1
     });
 
     if (!student) {
@@ -103,6 +104,9 @@ export class FnCommentService {
           _id: student._id,
           fullName: `${student.firstName} ${student.lastName}`,
           comment,
+          profileUrl: student.profileUrl,
+          createdAt: new Date(),
+          createdAtString: this.formatDate(new Date()),
           likes: [],
           dislikes: [],
         },
