@@ -27,7 +27,7 @@ export class FnQualificationService {
     const { idStudent } = userDecorator;
 
     this.logger.debug(
-      `::executeUniversity::parameters::${idCourse}-${idTeacher}`,
+      `::executeUniversity::parameters::${idStudent}-${idCourse}-${idTeacher}`,
     );
 
     const careerCourseTeacherForStudent =
@@ -71,7 +71,7 @@ export class FnQualificationService {
 
     await careerCourseTeacherForStudent.save();
 
-    await this.updateUniversityTeacherQualification(
+    this.updateUniversityTeacherQualification(
       idCourse,
       idTeacher,
       requestQualificationDto,
@@ -91,7 +91,10 @@ export class FnQualificationService {
     idTeacher: string,
     requestQualificationDto: request.RequestQualificationDto,
   ) {
+
     const { required } = requestQualificationDto;
+    
+    this.logger.debug(`::start::updateUniversityTeacherQualification::${JSON.stringify(required)}`)
 
     const universityTeacher = await this.universityTeacherModel.findById(
       idTeacher,
@@ -106,58 +109,6 @@ export class FnQualificationService {
     const requiredOptionalQualifications = course.optionalQualifications;
 
     if (requiredQualifications.length > 0) {
-      /*
-      const lern = requiredQualifications.find(
-        (required) =>
-          required.qualification.code == QUALIFICATION.REQUIRED.LEARN,
-      );
-      const averageLern = this.calculateQualificationAverageRound(
-        lern.averageQualification,
-        requestQualificationDto.required.learn,
-      );
-      operationQualificationMany.push(
-        this.geneateRequiredQualificationMany(
-          idTeacher,
-          idCourse,
-          QUALIFICATION.REQUIRED.LEARN,
-          averageLern,
-        ),
-      );
-
-      const hight = requiredQualifications.find(
-        (required) =>
-          required.qualification.code == QUALIFICATION.REQUIRED.HIGHT,
-      );
-      const averageHight = this.calculateQualificationAverageRound(
-        hight.averageQualification,
-        requestQualificationDto.required.hight,
-      );
-      operationQualificationMany.push(
-        this.geneateRequiredQualificationMany(
-          idTeacher,
-          idCourse,
-          QUALIFICATION.REQUIRED.HIGHT,
-          averageHight,
-        ),
-      );
-
-      const good = requiredQualifications.find(
-        (required) =>
-          required.qualification.code == QUALIFICATION.REQUIRED.GOOD_PEOPLE,
-      );
-      const averageGood = this.calculateQualificationAverageRound(
-        good.averageQualification,
-        requestQualificationDto.required.goodPeople,
-      );
-      operationQualificationMany.push(
-        this.geneateRequiredQualificationMany(
-          idTeacher,
-          idCourse,
-          QUALIFICATION.REQUIRED.GOOD_PEOPLE,
-          averageGood,
-        ),
-      );
-      */
 
       this.processRequiredQualifications(
         requiredQualifications,
@@ -170,12 +121,13 @@ export class FnQualificationService {
 
       if (operationQualificationMany.length > 0) {
         const averageQualification =
-          required.learn + required.hight + required.goodPeople;
+          (required.learn + required.hight + required.goodPeople)/3;
         const newAverageQualification =
           this.calculateQualificationAverageNotRound(
             course.manyAverageQualifications,
             averageQualification,
           );
+          
         operationQualificationMany.push(
           this.generateRequiredAverage(
             idTeacher,
@@ -189,63 +141,6 @@ export class FnQualificationService {
 
       if (requiredOptionalQualifications.length > 0) {
         const { optional } = requestQualificationDto;
-        const { assistance, late, worked } = optional;
-        /*if (assistance > 0) {
-          const optionalAssistance = requiredOptionalQualifications.find(
-            (required) =>
-              required.qualification.code == QUALIFICATION.OPTIONAL.ASSISTANCE,
-          );
-          const averageAssistance = this.calculateQualificationAverageRound(
-            optionalAssistance.averageQualification,
-            requestQualificationDto.optional.assistance,
-          );
-          operationQualificationMany.push(
-            this.geneateOptionalQualificationMany(
-              idTeacher,
-              idCourse,
-              QUALIFICATION.OPTIONAL.ASSISTANCE,
-              averageAssistance,
-            ),
-          );
-        }
-
-        if (late > 0) {
-          const optionalLate = requiredOptionalQualifications.find(
-            (required) =>
-              required.qualification.code == QUALIFICATION.OPTIONAL.LATE,
-          );
-          const averageLate = this.calculateQualificationAverageRound(
-            optionalLate.averageQualification,
-            requestQualificationDto.optional.late,
-          );
-          operationQualificationMany.push(
-            this.geneateOptionalQualificationMany(
-              idTeacher,
-              idCourse,
-              QUALIFICATION.OPTIONAL.LATE,
-              averageLate,
-            ),
-          );
-        }
-
-        if (worked > 0) {
-          const optionalWork = requiredOptionalQualifications.find(
-            (required) =>
-              required.qualification.code == QUALIFICATION.OPTIONAL.WORKED,
-          );
-          const averageWork = this.calculateQualificationAverageRound(
-            optionalWork.averageQualification,
-            requestQualificationDto.optional.worked,
-          );
-          operationQualificationMany.push(
-            this.geneateOptionalQualificationMany(
-              idTeacher,
-              idCourse,
-              QUALIFICATION.OPTIONAL.WORKED,
-              averageWork,
-            ),
-          );
-        }*/
 
         this.processOptionalQualifications(
           optional,
@@ -256,7 +151,7 @@ export class FnQualificationService {
           this.geneateOptionalQualificationMany.bind(this),
         );
         if (operationQualificationMany.length > 0) {
-          await this.universityTeacherModel.bulkWrite(
+         await this.universityTeacherModel.bulkWrite(
             operationQualificationMany,
           );
           operationQualificationMany = [];
@@ -265,6 +160,9 @@ export class FnQualificationService {
     } else {
       this.createUniversityTeacherQualification();
     }
+
+    
+    this.logger.debug(`::end::updateUniversityTeacherQualification::`)
   }
 
   private async createUniversityTeacherQualification() {}
@@ -349,15 +247,15 @@ export class FnQualificationService {
     oldAverage: number,
     newValue: number,
   ) {
-    const rawAverage = (oldAverage + newValue) / 2;
-    return Math.round(rawAverage);
+    const rawAverage = (newValue == 0) ? oldAverage : (oldAverage + newValue) / 2;
+    return Number(rawAverage.toFixed(2));
   }
 
   private calculateQualificationAverageNotRound(
     oldAverage: number,
     newValue: number,
   ) {
-    const rawAverage = (oldAverage + newValue) / 2;
+    const rawAverage = (newValue == 0) ? oldAverage : (oldAverage + newValue) / 2;
     return rawAverage;
   }
 
@@ -384,7 +282,6 @@ export class FnQualificationService {
       const qualification = requiredQualifications.find(
         (q) => q.qualification.code === code,
       );
-
       if (qualification) {
         const average = this.calculateQualificationAverageRound(
           qualification.averageQualification,
