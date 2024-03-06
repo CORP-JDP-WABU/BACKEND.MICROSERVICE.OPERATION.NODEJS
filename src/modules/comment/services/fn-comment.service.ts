@@ -42,7 +42,7 @@ export class FnCommentService {
       firstName: 1,
       lastName: 1,
       university: 1,
-      profileUrln: 1
+      profileUrln: 1,
     });
 
     if (!student) {
@@ -157,7 +157,10 @@ export class FnCommentService {
     await careerCourseTeacherForStudent.save();
   }
 
-  private async updateTeacherCourseCommentIncrement(idTeacher: string, idCourse: string) {
+  private async updateTeacherCourseCommentIncrement(
+    idTeacher: string,
+    idCourse: string,
+  ) {
     await this.universityTeacherModel.bulkWrite([
       {
         updateOne: {
@@ -171,11 +174,11 @@ export class FnCommentService {
             },
           },
           arrayFilters: [
-            { 'course._id': new mongoose.Types.ObjectId(idCourse) }
+            { 'course._id': new mongoose.Types.ObjectId(idCourse) },
           ],
         },
-      }
-    ])
+      },
+    ]);
   }
 
   private heandleReturn(isCommentCreate: boolean) {
