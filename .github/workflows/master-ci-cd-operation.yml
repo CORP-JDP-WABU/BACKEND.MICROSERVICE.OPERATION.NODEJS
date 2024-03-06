@@ -2,10 +2,10 @@ name: master-ci-cd-operation
 
 on:
   push:
-    branches: [release/v3.0.0]
+    branches: [master]
     
   pull_request:
-    branches: [release/v3.0.0]
+    branches: [master]
 
 jobs:
   build_and_push:
@@ -29,7 +29,7 @@ jobs:
         echo "SERVICE_TCP_PORT=40004" >> .env
         echo "SERVICE_BASE_PATH=/api" >> .env
         echo "SERVICE_HTTP_THROTTLE_TTL=60" >> .env
-        echo "SERVICE_HTTP_THROTTLE_LIMIT=10" >> .env
+        echo "SERVICE_HTTP_THROTTLE_LIMIT=100" >> .env
         echo "SWAGGER_BASE_PATH=/api/microservice-operation" >> .env
         echo "DATABASE_MONGO_HOSTNAME=${{ secrets.MASTER_ENV_DATABASE_MONGO_HOSTNAME }}" >> .env
         echo "DATABASE_MONGO_USER=${{ secrets.MASTER_ENV_DATABASE_MONGO_USER }}" >> .env
