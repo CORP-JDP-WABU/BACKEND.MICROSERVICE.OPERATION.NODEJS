@@ -37,39 +37,39 @@ export class FnQualificationService {
         'pendingToQualification.teacher.idTeacher': idTeacher,
       });
 
-    if (!careerCourseTeacherForStudent) {
-      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
+    if (careerCourseTeacherForStudent) {
+      /*throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
         `QUALIFICATION_NOT_EXISTS_STUDENT`,
+      );*/
+
+      const hasQualificationUpdate =
+        careerCourseTeacherForStudent.pendingToQualification.find(
+          (elemento) =>
+            elemento.course.idCourse == idCourse &&
+            elemento.teacher.idTeacher == idTeacher,
+        );
+
+      hasQualificationUpdate.hasQualification = true;
+
+      this.logger.debug(
+        `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`,
       );
+
+      careerCourseTeacherForStudent.pendingToQualification =
+        careerCourseTeacherForStudent.pendingToQualification.filter(
+          (elemento) => elemento._id != hasQualificationUpdate._id,
+        );
+
+      this.logger.debug(
+        `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+      );
+
+      careerCourseTeacherForStudent.pendingToQualification.push(
+        hasQualificationUpdate,
+      );
+
+      await careerCourseTeacherForStudent.save();
     }
-
-    const hasQualificationUpdate =
-      careerCourseTeacherForStudent.pendingToQualification.find(
-        (elemento) =>
-          elemento.course.idCourse == idCourse &&
-          elemento.teacher.idTeacher == idTeacher,
-      );
-
-    hasQualificationUpdate.hasQualification = true;
-
-    this.logger.debug(
-      `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`,
-    );
-
-    careerCourseTeacherForStudent.pendingToQualification =
-      careerCourseTeacherForStudent.pendingToQualification.filter(
-        (elemento) => elemento._id != hasQualificationUpdate._id,
-      );
-
-    this.logger.debug(
-      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
-    );
-
-    careerCourseTeacherForStudent.pendingToQualification.push(
-      hasQualificationUpdate,
-    );
-
-    await careerCourseTeacherForStudent.save();
 
     this.updateUniversityTeacherQualification(
       idCourse,
@@ -91,10 +91,13 @@ export class FnQualificationService {
     idTeacher: string,
     requestQualificationDto: request.RequestQualificationDto,
   ) {
-
     const { required } = requestQualificationDto;
-    
-    this.logger.debug(`::start::updateUniversityTeacherQualification::${JSON.stringify(required)}`)
+
+    this.logger.debug(
+      `::start::updateUniversityTeacherQualification::${JSON.stringify(
+        required,
+      )}`,
+    );
 
     const universityTeacher = await this.universityTeacherModel.findById(
       idTeacher,
@@ -109,7 +112,6 @@ export class FnQualificationService {
     const requiredOptionalQualifications = course.optionalQualifications;
 
     if (requiredQualifications.length > 0) {
-
       this.processRequiredQualifications(
         requiredQualifications,
         operationQualificationMany,
@@ -121,13 +123,13 @@ export class FnQualificationService {
 
       if (operationQualificationMany.length > 0) {
         const averageQualification =
-          (required.learn + required.hight + required.goodPeople)/3;
+          (required.learn + required.hight + required.goodPeople) / 3;
         const newAverageQualification =
           this.calculateQualificationAverageNotRound(
             course.manyAverageQualifications,
             averageQualification,
           );
-          
+
         operationQualificationMany.push(
           this.generateRequiredAverage(
             idTeacher,
@@ -151,7 +153,7 @@ export class FnQualificationService {
           this.geneateOptionalQualificationMany.bind(this),
         );
         if (operationQualificationMany.length > 0) {
-         await this.universityTeacherModel.bulkWrite(
+          await this.universityTeacherModel.bulkWrite(
             operationQualificationMany,
           );
           operationQualificationMany = [];
@@ -161,8 +163,7 @@ export class FnQualificationService {
       this.createUniversityTeacherQualification();
     }
 
-    
-    this.logger.debug(`::end::updateUniversityTeacherQualification::`)
+    this.logger.debug(`::end::updateUniversityTeacherQualification::`);
   }
 
   private async createUniversityTeacherQualification() {}
@@ -247,7 +248,12 @@ export class FnQualificationService {
     oldAverage: number,
     newValue: number,
   ) {
-    const rawAverage = (newValue == 0) ? oldAverage : (oldAverage == 0) ? newValue : (oldAverage + newValue) / 2;
+    const rawAverage =
+      newValue == 0
+        ? oldAverage
+        : oldAverage == 0
+        ? newValue
+        : (oldAverage + newValue) / 2;
     return Number(rawAverage.toFixed(2));
   }
 
@@ -255,7 +261,12 @@ export class FnQualificationService {
     oldAverage: number,
     newValue: number,
   ) {
-    const rawAverage = (newValue == 0) ? oldAverage  : (oldAverage == 0) ? newValue : (oldAverage + newValue) / 2;
+    const rawAverage =
+      newValue == 0
+        ? oldAverage
+        : oldAverage == 0
+        ? newValue
+        : (oldAverage + newValue) / 2;
     return rawAverage;
   }
 

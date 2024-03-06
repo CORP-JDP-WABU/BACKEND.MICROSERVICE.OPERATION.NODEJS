@@ -12,7 +12,7 @@ import { CommentController } from './comment.controller';
     MongooseModule.forFeature([
       {
         name: schemas.UniversityTeacher.name,
-        schema: schemas.UniversityTeacherSchema
+        schema: schemas.UniversityTeacherSchema,
       },
       {
         name: schemas.TeacherCourseComments.name,
