@@ -5,12 +5,11 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 
 import * as response from 'src/common/dto';
 import * as request from './dto';
-import * as exception from 'src/exception';
 import * as services from './services';
 import { SecurityGuard } from 'src/common/guard';
 import { UserDecoratorInterface } from 'src/common/interfaces';
@@ -28,30 +27,30 @@ export class CommentController {
   @Patch('/course/:idCourse/teacher/:idTeacher')
   @ApiCreatedResponse({
     description: 'The register has been successfully comment.',
-    type: response.ResponseGenericDto,
+    type: response.ResponseGenericDto
   })
   @ApiConflictResponse({
     description: 'The register has been successfully comment.',
-    type: null,
+    type: null
   })
   @ApiConflictResponse({
     description: 'The register has been failed comment.',
-    type: null,
+    type: null
   })
   @ApiInternalServerErrorResponse({
-    description: 'The register has been failed by comment.',
+    description: 'The register has been failed by comment.'
   })
   comment(
     @Param('idCourse') idCourse: string,
     @Param('idTeacher') idTeacher: string,
     @Body() requestCommentDto: request.RequestCommentDto,
-    @UserDecorator() userDecorator: UserDecoratorInterface,
+    @UserDecorator() userDecorator: UserDecoratorInterface
   ): Promise<response.ResponseGenericDto> {
     return this.fnCommentService.execute(
       idCourse,
       idTeacher,
       userDecorator,
-      requestCommentDto.comment,
+      requestCommentDto.comment
     );
   }
 }

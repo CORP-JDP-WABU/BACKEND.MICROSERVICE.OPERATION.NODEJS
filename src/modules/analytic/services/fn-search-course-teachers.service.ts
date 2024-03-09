@@ -10,7 +10,7 @@ export class FnSearchCourseTeachersService {
 
   constructor(
     @InjectModel(schemas.AnalitycSearchCourseTeachers.name)
-    private readonly analitycSearchCourseTeacherModel: mongoose.Model<schemas.AnalitycSearchCourseTeachersDocument>,
+    private readonly analitycSearchCourseTeacherModel: mongoose.Model<schemas.AnalitycSearchCourseTeachersDocument>
   ) {}
 
   async execute(request: interfaces.IGlobalAnalityc) {
@@ -21,7 +21,7 @@ export class FnSearchCourseTeachersService {
     const analitycSearch = await this.analitycSearchCourseTeacherModel.findOne({
       idUniversity,
       idCareer,
-      idStudent,
+      idStudent
     });
 
     if (!analitycSearch) {
@@ -42,15 +42,15 @@ export class FnSearchCourseTeachersService {
       recordActive: true,
       status: {
         code: 1,
-        description: '::register::search::course::teacher::',
-      },
+        description: '::register::search::course::teacher::'
+      }
     };
   }
 
   private async create(
     idUniversity: mongoose.Types.ObjectId,
     idCareer: mongoose.Types.ObjectId,
-    idStudent: mongoose.Types.ObjectId,
+    idStudent: mongoose.Types.ObjectId
   ) {
     const create = await this.analitycSearchCourseTeacherModel.create({
       idUniversity,
@@ -59,28 +59,24 @@ export class FnSearchCourseTeachersService {
       numberOfRepetitions: 1,
       module: 'ANALITYC_SEARCH_COURSE_TEACHER',
       parameters: null,
-      auditProperties: this.generateAuditProperties(),
+      auditProperties: this.generateAuditProperties()
     });
 
     this.logger.debug(`::execute::create::${create.id}`);
   }
 
   private async update(idAnalityc: mongoose.Types.ObjectId) {
-    const update =
-      await this.analitycSearchCourseTeacherModel.findByIdAndUpdate(
-        idAnalityc,
-        {
-          $set: {
-            'auditProperties.dateUpdate': new Date(),
-            'auditProperties.userUpdate': `${FnSearchCourseTeachersService.name}`,
-            'status.code': 2,
-            'status.description': '::update::search::course::teacher::',
-          },
-          $inc: {
-            numberOfRepetitions: 1,
-          },
-        },
-      );
+    const update = await this.analitycSearchCourseTeacherModel.findByIdAndUpdate(idAnalityc, {
+      $set: {
+        'auditProperties.dateUpdate': new Date(),
+        'auditProperties.userUpdate': `${FnSearchCourseTeachersService.name}`,
+        'status.code': 2,
+        'status.description': '::update::search::course::teacher::'
+      },
+      $inc: {
+        numberOfRepetitions: 1
+      }
+    });
 
     this.logger.debug(`::execute::update::${update.id}`);
   }

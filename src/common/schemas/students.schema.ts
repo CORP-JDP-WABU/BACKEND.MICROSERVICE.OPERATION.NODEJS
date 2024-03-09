@@ -27,8 +27,8 @@ export class Students {
   @Prop(
     raw({
       recoveryPassword: String,
-      verifyRegisterAccount: String,
-    }),
+      verifyRegisterAccount: String
+    })
   )
   sendCodes: {
     recoveryPassword: string;
@@ -41,8 +41,8 @@ export class Students {
   @Prop(
     raw({
       _id: mongoose.Types.ObjectId,
-      name: String,
-    }),
+      name: String
+    })
   )
   university: {
     _id: mongoose.Types.ObjectId;

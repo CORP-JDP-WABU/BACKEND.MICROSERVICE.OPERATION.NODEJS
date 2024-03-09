@@ -1,9 +1,8 @@
-import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AuditPropertiesSchema } from './audit-properties.schema';
 
-export type AnalitycSearchCourseTeachersDocument =
-  AnalitycSearchCourseTeachers & mongoose.Document;
+export type AnalitycSearchCourseTeachersDocument = AnalitycSearchCourseTeachers & mongoose.Document;
 
 @Schema({ collection: 'AnalitycSearchCourseTeachers', autoIndex: true })
 export class AnalitycSearchCourseTeachers {
@@ -30,5 +29,5 @@ export class AnalitycSearchCourseTeachers {
 }
 
 export const AnalitycSearchCourseTeachersSchema = SchemaFactory.createForClass(
-  AnalitycSearchCourseTeachers,
+  AnalitycSearchCourseTeachers
 );

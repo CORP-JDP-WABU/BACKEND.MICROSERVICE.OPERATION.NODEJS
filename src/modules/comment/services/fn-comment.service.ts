@@ -17,24 +17,17 @@ export class FnCommentService {
     @InjectModel(schemas.CareerCourseTeacher.name)
     private readonly careerCourseTeacherModel: mongoose.Model<schemas.CareerCourseTeacherDocument>,
     @InjectModel(schemas.UniversityTeacher.name)
-    private readonly universityTeacherModel: mongoose.Model<schemas.UniversityTeacherDocument>,
+    private readonly universityTeacherModel: mongoose.Model<schemas.UniversityTeacherDocument>
   ) {}
 
-  async execute(
-    idCourse: string,
-    idTeacher: string,
-    userDecorator: any,
-    comment: string,
-  ) {
+  async execute(idCourse: string, idTeacher: string, userDecorator: any, comment: string) {
     const { idStudent } = userDecorator;
 
-    this.logger.debug(
-      `::execute::parameters::${idCourse}-${idTeacher}-${idStudent}-${comment}`,
-    );
+    this.logger.debug(`::execute::parameters::${idCourse}-${idTeacher}-${idStudent}-${comment}`);
 
     const teacherCourseComment = await this.teacherCourseCommentModel.findOne({
       idCourse: mongoose.Types.ObjectId(idCourse),
-      idTeacher: mongoose.Types.ObjectId(idTeacher),
+      idTeacher: mongoose.Types.ObjectId(idTeacher)
     });
 
     const student = await this.studentModel.findById(idStudent, {
@@ -42,24 +35,17 @@ export class FnCommentService {
       firstName: 1,
       lastName: 1,
       university: 1,
-      profileUrln: 1,
+      profileUrln: 1
     });
 
     if (!student) {
-      throw new exception.NotExistStudentCustomException(
-        `COMMENT_NOT_EXIST_STUDENT`,
-      );
+      throw new exception.NotExistStudentCustomException(`COMMENT_NOT_EXIST_STUDENT`);
     }
 
     await this.updateHasCommenInQualification(idStudent, idCourse, idTeacher);
 
     if (!teacherCourseComment) {
-      return this.createCommentInCourseTeacher(
-        student,
-        idTeacher,
-        idCourse,
-        comment,
-      );
+      return this.createCommentInCourseTeacher(student, idTeacher, idCourse, comment);
     }
 
     const studentComment = await this.generateStudentComments(student, comment);
@@ -71,7 +57,7 @@ export class FnCommentService {
 
   private formatDate(date: Date): string {
     const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // ¡Recuerda que los meses en JavaScript son 0-indexados!
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear().toString();
     return `${day}/${month}/${year}`;
   }
@@ -85,7 +71,7 @@ export class FnCommentService {
       createdAt: new Date(),
       createdAtString: this.formatDate(new Date()),
       likes: [],
-      dislikes: [],
+      dislikes: []
     };
   }
 
@@ -93,7 +79,7 @@ export class FnCommentService {
     student: any,
     idTeacher: string,
     idCourse: string,
-    comment: string,
+    comment: string
   ) {
     const newTeacherCourseComment = {
       idUniversity: student.university._id,
@@ -108,9 +94,9 @@ export class FnCommentService {
           createdAt: new Date(),
           createdAtString: this.formatDate(new Date()),
           likes: [],
-          dislikes: [],
-        },
-      ],
+          dislikes: []
+        }
+      ]
     };
 
     await this.teacherCourseCommentModel.create(newTeacherCourseComment);
@@ -121,62 +107,54 @@ export class FnCommentService {
   private async updateHasCommenInQualification(
     idStudent: string,
     idCourse: string,
-    idTeacher: string,
+    idTeacher: string
   ) {
-    const careerCourseTeacherForStudent =
-      await this.careerCourseTeacherModel.findOne({
-        idStudent: new mongoose.Types.ObjectId(idStudent),
-        'pendingToQualification.course.idCourse': idCourse,
-        'pendingToQualification.teacher.idTeacher': idTeacher,
-      });
+    const careerCourseTeacherForStudent = await this.careerCourseTeacherModel.findOne({
+      idStudent: new mongoose.Types.ObjectId(idStudent),
+      'pendingToQualification.course.idCourse': idCourse,
+      'pendingToQualification.teacher.idTeacher': idTeacher
+    });
 
-    if (careerCourseTeacherForStudent) {
-      /*throw new exception.NotExistStudentCareerCourseTeacherCustomException(
-        `QUALIFICATION_NOT_EXISTS_STUDENT`,
-      );*/
-      const hasCommentUpdate =
-        careerCourseTeacherForStudent.pendingToQualification.find(
-          (elemento) =>
-            elemento.course.idCourse == idCourse &&
-            elemento.teacher.idTeacher == idTeacher,
-        );
+    if (!careerCourseTeacherForStudent) {
+      throw new exception.NotExistStudentCareerCourseTeacherCustomException(
+        `QUALIFICATION_NOT_EXISTS_STUDENT`
+      );
+    }
 
-      hasCommentUpdate.hasComment = true;
+    const hasCommentUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
+      elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
+    );
 
-      careerCourseTeacherForStudent.pendingToQualification =
-        careerCourseTeacherForStudent.pendingToQualification.filter(
-          (elemento) => elemento._id != hasCommentUpdate._id,
-        );
+    hasCommentUpdate.hasComment = true;
 
-      this.logger.debug(
-        `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+    careerCourseTeacherForStudent.pendingToQualification =
+      careerCourseTeacherForStudent.pendingToQualification.filter(
+        elemento => elemento._id != hasCommentUpdate._id
       );
 
-      await careerCourseTeacherForStudent.save();
-    }
+    this.logger.debug(
+      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
+    );
+
+    await careerCourseTeacherForStudent.save();
   }
 
-  private async updateTeacherCourseCommentIncrement(
-    idTeacher: string,
-    idCourse: string,
-  ) {
+  private async updateTeacherCourseCommentIncrement(idTeacher: string, idCourse: string) {
     await this.universityTeacherModel.bulkWrite([
       {
         updateOne: {
           filter: {
             _id: new mongoose.Types.ObjectId(idTeacher),
-            'courses._id': new mongoose.Types.ObjectId(idCourse),
+            'courses._id': new mongoose.Types.ObjectId(idCourse)
           },
           update: {
             $inc: {
-              'courses.$[course].manyComments': 1,
-            },
+              'courses.$[course].manyComments': 1
+            }
           },
-          arrayFilters: [
-            { 'course._id': new mongoose.Types.ObjectId(idCourse) },
-          ],
-        },
-      },
+          arrayFilters: [{ 'course._id': new mongoose.Types.ObjectId(idCourse) }]
+        }
+      }
     ]);
   }
 
@@ -185,8 +163,8 @@ export class FnCommentService {
       message: 'Processo exitoso',
       operation: `::${FnCommentService.name}::execute`,
       data: {
-        isCommentCreate,
-      },
+        isCommentCreate
+      }
     };
   }
 }

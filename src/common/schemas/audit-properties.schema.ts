@@ -3,13 +3,13 @@ import { Prop, raw } from '@nestjs/mongoose';
 export class AuditPropertiesSchema {
   @Prop({
     type: Date,
-    default: () => new Date(),
+    default: () => new Date()
   })
   dateCreate: Date;
 
   @Prop({
     type: Date,
-    default: () => null,
+    default: () => null
   })
   dateUpdate: Date;
 
@@ -18,13 +18,13 @@ export class AuditPropertiesSchema {
 
   @Prop({
     type: String,
-    default: () => null,
+    default: () => null
   })
   userUpdate: string;
 
   @Prop({
     type: Boolean,
-    default: () => true,
+    default: () => true
   })
   recordActive: boolean;
 
@@ -33,10 +33,10 @@ export class AuditPropertiesSchema {
       type: [
         {
           code: Number,
-          description: String,
-        },
-      ],
-    }),
+          description: String
+        }
+      ]
+    })
   )
   status: {
     code: number;

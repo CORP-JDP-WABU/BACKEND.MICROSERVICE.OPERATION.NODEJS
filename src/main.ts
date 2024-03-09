@@ -17,8 +17,8 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: config.get('tcp.host'),
-      port: config.get('tcp.port'),
-    },
+      port: config.get('tcp.port')
+    }
   });
 
   app.useGlobalFilters(new HttpCustomException(logger));
@@ -54,14 +54,12 @@ async function bootstrap() {
   await app.listen(config.get('http.port'), config.get('http.host'));
 
   logger.log(
-    `HTTP server listening at http://${config.get('http.host')}:${config.get(
-      'http.port',
-    )}`,
+    `HTTP server listening at http://${config.get('http.host')}:${config.get('http.port')}`
   );
   logger.log(
     `Swagger documentation at http://${config.get('http.host')}:${config.get(
-      'http.port',
-    )}${swaggerBasePath}`,
+      'http.port'
+    )}${swaggerBasePath}`
   );
 }
 

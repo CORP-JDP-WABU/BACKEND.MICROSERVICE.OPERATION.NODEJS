@@ -4,7 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
   Logger,
-  HttpStatus,
+  HttpStatus
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -27,7 +27,7 @@ export class HttpCustomException implements ExceptionFilter {
       this.logger.warn(
         `::${this.className}::${exception.name}::${statusCode || status}::${
           message || exception.getResponse()
-        }::`,
+        }::`
       );
     }
     response.status(status);
@@ -40,19 +40,19 @@ export class HttpCustomException implements ExceptionFilter {
       case HttpStatus.BAD_REQUEST:
         return response.send({
           statusCode,
-          rules: message,
+          rules: message
         });
       case HttpStatus.CONFLICT:
         const customMessage = message.split(' [')[0];
         return response.send({
           statusCode,
-          message: customMessage,
+          message: customMessage
         });
       default:
         return response.send({
           statusCode: statusCode || status,
           message: 'Ocurrio un error inesperado, vuelva a intentar el proceso',
-          code: message,
+          code: message
         });
     }
   }

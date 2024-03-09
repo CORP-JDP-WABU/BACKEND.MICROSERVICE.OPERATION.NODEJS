@@ -9,10 +9,10 @@ export class AppController {
   @Get('healthcheck')
   getStatusHealthCheck(): Record<string, string> {
     const response = {
-      mongodb: this.connection.readyState === 1 ? 'ready' : 'connecting',
+      mongodb: this.connection.readyState === 1 ? 'ready' : 'connecting'
     };
 
-    if (Object.values(response).find((status) => status === 'connecting')) {
+    if (Object.values(response).find(status => status === 'connecting')) {
       throw new InternalServerErrorException(response);
     }
 

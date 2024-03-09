@@ -1,15 +1,10 @@
-import {
-  DynamicModule,
-  Module,
-  OnApplicationShutdown,
-  Provider,
-} from '@nestjs/common';
+import { DynamicModule, Module, OnApplicationShutdown, Provider } from '@nestjs/common';
 import { ClientProxy, ClientTCP, Closeable } from '@nestjs/microservices';
 
 import {
   ClientProviderOptions,
   ClientsModuleOptionsFactory,
-  ClientsProviderAsyncOptions,
+  ClientsProviderAsyncOptions
 } from './interfaces';
 import { SecurityService } from './security.service';
 import { CLIENT } from 'src/common/const/comon.const';
@@ -19,13 +14,13 @@ export class SecurityModule {
   static register(clientOptions: ClientProviderOptions): DynamicModule {
     const client = {
       provide: CLIENT.SECURITY,
-      useValue: this.assignOnAppShutdownHook(new ClientTCP(clientOptions)),
+      useValue: this.assignOnAppShutdownHook(new ClientTCP(clientOptions))
     };
     return {
       global: clientOptions.glogal,
       module: SecurityModule,
       providers: [client, SecurityService],
-      exports: [SecurityService],
+      exports: [SecurityService]
     };
   }
 
@@ -35,18 +30,14 @@ export class SecurityModule {
       module: SecurityModule,
       imports: option.imports,
       providers: [
-        ...this.createAsyncProviders(option).concat(
-          option.extraProviders || [],
-        ),
-        SecurityService,
+        ...this.createAsyncProviders(option).concat(option.extraProviders || []),
+        SecurityService
       ],
-      exports: [SecurityService],
+      exports: [SecurityService]
     };
   }
 
-  private static createAsyncProviders(
-    options: ClientsProviderAsyncOptions,
-  ): Provider[] {
+  private static createAsyncProviders(options: ClientsProviderAsyncOptions): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -54,34 +45,29 @@ export class SecurityModule {
       this.createAsyncOptionsProvider(options),
       {
         provide: options.useClass,
-        useClass: options.useClass,
-      },
+        useClass: options.useClass
+      }
     ];
   }
 
-  private static createAsyncOptionsProvider(
-    options: ClientsProviderAsyncOptions,
-  ): Provider {
+  private static createAsyncOptionsProvider(options: ClientsProviderAsyncOptions): Provider {
     if (options.useFactory) {
       return {
         provide: CLIENT.SECURITY,
         useFactory: this.createFactoryWrapper(options.useFactory),
-        inject: options.inject || [],
+        inject: options.inject || []
       };
     }
     return {
       provide: CLIENT.SECURITY,
-      useFactory: this.createFactoryWrapper(
-        (optionsFactory: ClientsModuleOptionsFactory) =>
-          optionsFactory.createClientOptions(),
+      useFactory: this.createFactoryWrapper((optionsFactory: ClientsModuleOptionsFactory) =>
+        optionsFactory.createClientOptions()
       ),
-      inject: [options.useExisting || options.useClass],
+      inject: [options.useExisting || options.useClass]
     };
   }
 
-  private static createFactoryWrapper(
-    useFactory: ClientsProviderAsyncOptions['useFactory'],
-  ) {
+  private static createFactoryWrapper(useFactory: ClientsProviderAsyncOptions['useFactory']) {
     return async (...args: any[]) => {
       const clientOptions = await useFactory(...args);
       const clientProxyRef = new ClientTCP(clientOptions);
@@ -89,11 +75,8 @@ export class SecurityModule {
     };
   }
 
-  private static assignOnAppShutdownHook(
-    client: ClientProxy & Closeable,
-  ): ClientProxy & Closeable {
-    (client as unknown as OnApplicationShutdown).onApplicationShutdown =
-      client.close;
+  private static assignOnAppShutdownHook(client: ClientProxy & Closeable): ClientProxy & Closeable {
+    (client as unknown as OnApplicationShutdown).onApplicationShutdown = client.close;
     return client;
   }
 }

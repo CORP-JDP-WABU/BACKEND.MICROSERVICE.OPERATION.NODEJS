@@ -10,22 +10,14 @@ export class CryptoService {
 
   async decrypt(text: any, hashKeys?: any) {
     const encryptedText = Buffer.from(text, 'hex');
-    const decipher = createDecipheriv(
-      this.algorithm,
-      hashKeys ?? this.key,
-      this.iv,
-    );
+    const decipher = createDecipheriv(this.algorithm, hashKeys ?? this.key, this.iv);
     let decrypted = decipher.update(encryptedText);
     decrypted = Buffer.concat([decrypted, decipher.final()]);
     return decrypted.toString();
   }
 
   async encrypt(text: any, hashKeys?: any) {
-    const cipher = createCipheriv(
-      this.algorithm,
-      hashKeys ?? this.key,
-      this.iv,
-    );
+    const cipher = createCipheriv(this.algorithm, hashKeys ?? this.key, this.iv);
     let encrypted = cipher.update(text);
     encrypted = Buffer.concat([encrypted, cipher.final()]);
     return encrypted.toString('hex');

@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import * as schemas from 'src/common/schemas';
 import { AppController } from './app.controller';
 import configuration from './config/configuration';
 import { QualificationModule } from './modules/qualification/qualification.module';
@@ -16,14 +15,14 @@ import { AnalitycModule } from './modules/analytic/analityc.module';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [configuration],
+      load: [configuration]
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        ...configService.get('mongodb'),
+        ...configService.get('mongodb')
       }),
-      inject: [ConfigService],
+      inject: [ConfigService]
     }),
     MongooseModule.forFeature([]),
     ThrottlerModule.forRootAsync({
@@ -31,20 +30,20 @@ import { AnalitycModule } from './modules/analytic/analityc.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         ttl: config.get('http.throttle.ttl'),
-        limit: config.get('http.throttle.limit'),
-      }),
+        limit: config.get('http.throttle.limit')
+      })
     }),
     QualificationModule,
     CommentModule,
     CryptoModule,
-    AnalitycModule,
+    AnalitycModule
   ],
   controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
-  ],
+      useClass: ThrottlerGuard
+    }
+  ]
 })
 export class AppModule {}

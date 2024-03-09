@@ -9,18 +9,15 @@ import * as services from './services';
     MongooseModule.forFeature([
       {
         name: schemas.AnalitycSearchCourseTeachers.name,
-        schema: schemas.AnalitycSearchCourseTeachersSchema,
+        schema: schemas.AnalitycSearchCourseTeachersSchema
       },
       {
         name: schemas.AnalitycSearchQualificationTeachers.name,
-        schema: schemas.AnalitycSearchQualificationTeachersSchema,
-      },
-    ]),
+        schema: schemas.AnalitycSearchQualificationTeachersSchema
+      }
+    ])
   ],
   controllers: [AnalitycController],
-  providers: [
-    services.FnSearchCourseTeachersService,
-    services.FnSearchQualificationTeachersService,
-  ],
+  providers: [services.FnSearchCourseTeachersService, services.FnSearchQualificationTeachersService]
 })
 export class AnalitycModule {}

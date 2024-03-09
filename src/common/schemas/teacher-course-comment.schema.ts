@@ -2,8 +2,7 @@ import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { AuditPropertiesSchema } from './audit-properties.schema';
 
-export type TeacherCourseCommentsDocument = TeacherCourseComments &
-  mongoose.Document;
+export type TeacherCourseCommentsDocument = TeacherCourseComments & mongoose.Document;
 
 @Schema({ collection: 'TeacherCourseComments', autoIndex: true })
 export class TeacherCourseComments {
@@ -27,10 +26,10 @@ export class TeacherCourseComments {
           createdAt: Date,
           createdAtString: String,
           likes: [String],
-          dislikes: [String],
-        },
-      ],
-    }),
+          dislikes: [String]
+        }
+      ]
+    })
   )
   students: {
     _id: mongoose.Types.ObjectId;
@@ -45,11 +44,9 @@ export class TeacherCourseComments {
 
   @Prop({
     type: AuditPropertiesSchema,
-    default: () => new AuditPropertiesSchema(),
+    default: () => new AuditPropertiesSchema()
   })
   auditProperties: AuditPropertiesSchema;
 }
 
-export const TeacherCourseCommentsSchema = SchemaFactory.createForClass(
-  TeacherCourseComments,
-);
+export const TeacherCourseCommentsSchema = SchemaFactory.createForClass(TeacherCourseComments);

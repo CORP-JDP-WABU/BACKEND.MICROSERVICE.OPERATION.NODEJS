@@ -12,31 +12,30 @@ import { CommentController } from './comment.controller';
     MongooseModule.forFeature([
       {
         name: schemas.UniversityTeacher.name,
-        schema: schemas.UniversityTeacherSchema,
+        schema: schemas.UniversityTeacherSchema
       },
       {
         name: schemas.TeacherCourseComments.name,
-        schema: schemas.TeacherCourseCommentsSchema,
+        schema: schemas.TeacherCourseCommentsSchema
       },
       {
         name: schemas.CareerCourseTeacher.name,
-        schema: schemas.CareerCourseTeacherSchema,
+        schema: schemas.CareerCourseTeacherSchema
       },
       {
         name: schemas.Students.name,
-        schema: schemas.StudentsSchema,
-      },
+        schema: schemas.StudentsSchema
+      }
     ]),
     SecurityModule.registerAsync({
       global: true,
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) =>
-        configService.get('client.security'),
-      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => configService.get('client.security'),
+      inject: [ConfigService]
     }),
-    CryptoModule,
+    CryptoModule
   ],
   controllers: [CommentController],
-  providers: [services.FnCommentService],
+  providers: [services.FnCommentService]
 })
 export class CommentModule {}

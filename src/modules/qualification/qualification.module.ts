@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { QualificationController } from './qualification.controller';
 import { CryptoModule } from 'src/common/crypto/crypto.module';
@@ -13,26 +12,22 @@ import { SecurityModule } from 'src/common/client/security/security.module';
     MongooseModule.forFeature([
       {
         name: schemas.CareerCourseTeacher.name,
-        schema: schemas.CareerCourseTeacherSchema,
+        schema: schemas.CareerCourseTeacherSchema
       },
       {
         name: schemas.UniversityTeacher.name,
-        schema: schemas.UniversityTeacherSchema,
-      },
+        schema: schemas.UniversityTeacherSchema
+      }
     ]),
     SecurityModule.registerAsync({
       global: true,
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) =>
-        configService.get('client.security'),
-      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => configService.get('client.security'),
+      inject: [ConfigService]
     }),
-    CryptoModule,
+    CryptoModule
   ],
   controllers: [QualificationController],
-  providers: [
-    services.FnQualificationIgnorantService,
-    services.FnQualificationService,
-  ],
+  providers: [services.FnQualificationIgnorantService, services.FnQualificationService]
 })
 export class QualificationModule {}

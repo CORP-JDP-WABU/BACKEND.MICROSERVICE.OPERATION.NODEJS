@@ -11,7 +11,7 @@ export class FnQualificationIgnorantService {
 
   constructor(
     @InjectModel(schemas.CareerCourseTeacher.name)
-    private readonly careerCourseTeacherModel: mongoose.Model<schemas.CareerCourseTeacherDocument>,
+    private readonly careerCourseTeacherModel: mongoose.Model<schemas.CareerCourseTeacherDocument>
   ) {}
 
   async execute(idCourse: string, idTeacher: string, userDecorator: any) {
@@ -19,50 +19,45 @@ export class FnQualificationIgnorantService {
 
     this.logger.debug(`::execute::parameters::${idCourse}-${idTeacher}`);
 
-    const careerCourseTeacherForStudent =
-      await this.careerCourseTeacherModel.findOne({
-        idStudent: new mongoose.Types.ObjectId(idStudent),
-        'pendingToQualification.course.idCourse': idCourse,
-        'pendingToQualification.teacher.idTeacher': idTeacher,
-      });
+    const careerCourseTeacherForStudent = await this.careerCourseTeacherModel.findOne({
+      idStudent: new mongoose.Types.ObjectId(idStudent),
+      'pendingToQualification.course.idCourse': idCourse,
+      'pendingToQualification.teacher.idTeacher': idTeacher
+    });
 
     if (!careerCourseTeacherForStudent) {
       throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
-        `QUALIFICATION_NOT_EXISTS_STUDENT`,
+        `QUALIFICATION_NOT_EXISTS_STUDENT`
       );
     }
 
     this.logger.debug(
-      `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+      `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );
 
-    const hasIgnorantUpdate =
-      careerCourseTeacherForStudent.pendingToQualification.find(
-        (elemento) =>
-          elemento.course.idCourse == idCourse &&
-          elemento.teacher.idTeacher == idTeacher,
-      );
+    const hasIgnorantUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
+      elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
+    );
 
     const manyQualification = careerCourseTeacherForStudent.manyQualification;
-    const manyIgnor =
-      careerCourseTeacherForStudent.pendingToQualification.filter(
-        (x) => x.hasIgnor,
-      ).length;
+    const manyIgnor = careerCourseTeacherForStudent.pendingToQualification.filter(
+      x => x.hasIgnor
+    ).length;
 
     if (manyQualification == manyIgnor + 1) {
       await this.careerCourseTeacherModel.updateMany(
         { _id: careerCourseTeacherForStudent._id },
         {
           $set: { 'pendingToQualification.$[].hasIgnor': false },
-          multi: true,
-        },
+          multi: true
+        }
       );
       return <response.ResponseGenericDto>{
         message: 'Processo exitoso',
         operation: `::${FnQualificationIgnorantService.name}::execute`,
         data: {
-          isRemoveTeacherToList: false,
-        },
+          isRemoveTeacherToList: false
+        }
       };
     }
 
@@ -71,11 +66,11 @@ export class FnQualificationIgnorantService {
 
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
-        (elemento) => elemento._id != hasIgnorantUpdate._id,
+        elemento => elemento._id != hasIgnorantUpdate._id
       );
 
     this.logger.debug(
-      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
+      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );
 
     await careerCourseTeacherForStudent.save();
@@ -84,8 +79,8 @@ export class FnQualificationIgnorantService {
       message: 'Processo exitoso',
       operation: `::${FnQualificationIgnorantService.name}::execute`,
       data: {
-        isRemoveTeacherToList: true,
-      },
+        isRemoveTeacherToList: true
+      }
     };
   }
 }

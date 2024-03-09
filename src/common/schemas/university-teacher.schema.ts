@@ -42,24 +42,24 @@ export class UniversityTeacher {
             {
               qualification: {
                 code: Number,
-                value: String,
+                value: String
               },
-              averageQualification: Number,
-            },
+              averageQualification: Number
+            }
           ],
           optionalQualifications: [
             {
               qualification: {
                 code: Number,
-                value: String,
+                value: String
               },
               averageQualification: Number,
-              countQualifications: Number,
-            },
-          ],
-        },
-      ],
-    }),
+              countQualifications: Number
+            }
+          ]
+        }
+      ]
+    })
   )
   courses: {
     _id: mongoose.Types.ObjectId;
@@ -74,7 +74,7 @@ export class UniversityTeacher {
           description: string;
         };
         averageQualification: number;
-      },
+      }
     ];
     optionalQualifications: [
       {
@@ -84,10 +84,9 @@ export class UniversityTeacher {
         };
         averageQualification: number;
         countQualifications: number;
-      },
+      }
     ];
   }[];
 }
 
-export const UniversityTeacherSchema =
-  SchemaFactory.createForClass(UniversityTeacher);
+export const UniversityTeacherSchema = SchemaFactory.createForClass(UniversityTeacher);
