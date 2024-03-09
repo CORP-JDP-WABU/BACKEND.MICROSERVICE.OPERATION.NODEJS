@@ -130,31 +130,30 @@ export class FnCommentService {
         'pendingToQualification.teacher.idTeacher': idTeacher,
       });
 
-    if (!careerCourseTeacherForStudent) {
-      throw new exception.NotExistStudentCareerCourseTeacherCustomException(
+    if (careerCourseTeacherForStudent) {
+      /*throw new exception.NotExistStudentCareerCourseTeacherCustomException(
         `QUALIFICATION_NOT_EXISTS_STUDENT`,
+      );*/
+      const hasCommentUpdate =
+        careerCourseTeacherForStudent.pendingToQualification.find(
+          (elemento) =>
+            elemento.course.idCourse == idCourse &&
+            elemento.teacher.idTeacher == idTeacher,
+        );
+
+      hasCommentUpdate.hasComment = true;
+
+      careerCourseTeacherForStudent.pendingToQualification =
+        careerCourseTeacherForStudent.pendingToQualification.filter(
+          (elemento) => elemento._id != hasCommentUpdate._id,
+        );
+
+      this.logger.debug(
+        `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
       );
+
+      await careerCourseTeacherForStudent.save();
     }
-
-    const hasCommentUpdate =
-      careerCourseTeacherForStudent.pendingToQualification.find(
-        (elemento) =>
-          elemento.course.idCourse == idCourse &&
-          elemento.teacher.idTeacher == idTeacher,
-      );
-
-    hasCommentUpdate.hasComment = true;
-
-    careerCourseTeacherForStudent.pendingToQualification =
-      careerCourseTeacherForStudent.pendingToQualification.filter(
-        (elemento) => elemento._id != hasCommentUpdate._id,
-      );
-
-    this.logger.debug(
-      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`,
-    );
-
-    await careerCourseTeacherForStudent.save();
   }
 
   private async updateTeacherCourseCommentIncrement(
