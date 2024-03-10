@@ -62,13 +62,14 @@ export class FnQualificationIgnorantService {
     }
 
     hasIgnorantUpdate.hasIgnor = true;
-    hasIgnorantUpdate.hasQualification = true;
 
     careerCourseTeacherForStudent.pendingToQualification =
       careerCourseTeacherForStudent.pendingToQualification.filter(
         elemento => elemento._id != hasIgnorantUpdate._id
       );
 
+    careerCourseTeacherForStudent.pendingToQualification.push(hasIgnorantUpdate);
+    
     this.logger.debug(
       `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );
