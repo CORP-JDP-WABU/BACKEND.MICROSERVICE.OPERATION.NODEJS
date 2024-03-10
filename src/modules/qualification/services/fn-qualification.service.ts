@@ -89,13 +89,7 @@ export class FnQualificationService {
       hasQualification: true
     });
     
-    if(!historyQualificationStudent && historyQualificationStudent.hasComment) {
-      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
-        `QUALIFICATION_NOT_EXISTS_STUDENT`
-      );
-    }
-    
-    if(historyQualificationStudent) {
+    if(!historyQualificationStudent) {
       await this.historyQualificationStudent.create({
         idStudent: idStudentMongoose,
         idCourse: idCourseMongoose,
@@ -116,6 +110,12 @@ export class FnQualificationService {
       });
 
       this.updateUniversityTeacherQualification(idCourse, idTeacher, requestQualificationDto);
+    } else {
+      if(historyQualificationStudent.hasComment) {
+        throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
+          `QUALIFICATION_NOT_EXISTS_STUDENT`
+        );
+      }
     }
 
   }
