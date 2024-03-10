@@ -72,7 +72,7 @@ export class FnCommentService {
     historyQualificationStudent.auditProperties.dateUpdate = new Date();
     historyQualificationStudent.auditProperties.userUpdate = "STUDENT";
     await historyQualificationStudent.save();
-    
+
     const studentComment = await this.generateStudentComments(student, comment);
     teacherCourseComment.students.push(studentComment);
     await teacherCourseComment.save();
@@ -140,10 +140,7 @@ export class FnCommentService {
       'pendingToQualification.teacher.idTeacher': idTeacher
     });
 
-    if (!careerCourseTeacherForStudent) {
-      /*throw new exception.NotExistStudentCareerCourseTeacherCustomException(
-        `QUALIFICATION_NOT_EXISTS_STUDENT`
-      );*/
+    if (careerCourseTeacherForStudent) {
 
       const hasCommentUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
         elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher

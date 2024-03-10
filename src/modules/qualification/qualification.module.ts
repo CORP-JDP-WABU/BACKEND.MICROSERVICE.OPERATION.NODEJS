@@ -20,7 +20,7 @@ import { SecurityModule } from 'src/common/client/security/security.module';
       },
       {
         name: schemas.HistoryQualificationStudent.name,
-        schema: schemas.HistoryQualificationStudent
+        schema: schemas.HistoryQualificationStudentSchema
       }
     ]),
     SecurityModule.registerAsync({
