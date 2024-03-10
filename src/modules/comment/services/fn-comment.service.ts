@@ -58,11 +58,10 @@ export class FnCommentService {
       idStudent: idStudentMongoose,
       idCourse: idCourseMongoose,
       idTeacher: idTeacherMongoose,
-      hasQualification: true,
-      hasComment: true
+      hasQualification: true
     });
 
-    if(!historyQualificationStudent) {
+    if(historyQualificationStudent && historyQualificationStudent.hasComment) {
       throw new exception.NotExistStudentCareerCourseTeacherCustomException(
         `QUALIFICATION_NOT_EXISTS_STUDENT`
       );
