@@ -72,8 +72,9 @@ export class FnQualificationService {
       `::updateCareerCourseTeacherForStudent::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );
 
-    careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
     careerCourseTeacherForStudent.manyQualification = careerCourseTeacherForStudent.pendingToQualification.length;
+    careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
+    
     this.logger.debug(
       `::updateCareerCourseTeacherForStudent::careerCourseTeacherForStudent::manyQualification::${careerCourseTeacherForStudent.manyQualification}`
     );
