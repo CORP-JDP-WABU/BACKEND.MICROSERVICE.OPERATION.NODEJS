@@ -25,6 +25,10 @@ import { CommentController } from './comment.controller';
       {
         name: schemas.Students.name,
         schema: schemas.StudentsSchema
+      },
+      {
+        name: schemas.HistoryQualificationStudent.name,
+        schema: schemas.HistoryQualificationStudentSchema
       }
     ]),
     SecurityModule.registerAsync({

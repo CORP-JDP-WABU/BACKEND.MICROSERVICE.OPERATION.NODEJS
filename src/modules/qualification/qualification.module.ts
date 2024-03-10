@@ -17,6 +17,10 @@ import { SecurityModule } from 'src/common/client/security/security.module';
       {
         name: schemas.UniversityTeacher.name,
         schema: schemas.UniversityTeacherSchema
+      },
+      {
+        name: schemas.HistoryQualificationStudent.name,
+        schema: schemas.HistoryQualificationStudent
       }
     ]),
     SecurityModule.registerAsync({

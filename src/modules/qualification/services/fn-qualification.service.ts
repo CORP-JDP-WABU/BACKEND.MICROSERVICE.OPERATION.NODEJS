@@ -6,6 +6,7 @@ import * as exceptions from 'src/exception';
 import * as response from 'src/common/dto';
 import * as request from '../dto';
 import { QUALIFICATION } from 'src/common/const/comon.const';
+import { stringify } from 'querystring';
 
 @Injectable()
 export class FnQualificationService {
@@ -15,7 +16,9 @@ export class FnQualificationService {
     @InjectModel(schemas.CareerCourseTeacher.name)
     private readonly careerCourseTeacherModel: mongoose.Model<schemas.CareerCourseTeacherDocument>,
     @InjectModel(schemas.UniversityTeacher.name)
-    private readonly universityTeacherModel: mongoose.Model<schemas.UniversityTeacherDocument>
+    private readonly universityTeacherModel: mongoose.Model<schemas.UniversityTeacherDocument>,
+    @InjectModel(schemas.HistoryQualificationStudent.name)
+    private readonly historyQualificationStudent: mongoose.Model<schemas.HistoryQualificationStudentDocument>
   ) {}
 
   async execute(
@@ -33,13 +36,23 @@ export class FnQualificationService {
       'pendingToQualification.course.idCourse': idCourse,
       'pendingToQualification.teacher.idTeacher': idTeacher
     });
-
-    if (!careerCourseTeacherForStudent) {
-      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
-        `QUALIFICATION_NOT_EXISTS_STUDENT`
-      );
+    
+    if (careerCourseTeacherForStudent) {
+      await this.updateCareerCourseTeacherForStudent(careerCourseTeacherForStudent, idCourse, idTeacher);
+      this.updateUniversityTeacherQualification(idCourse, idTeacher, requestQualificationDto);
+    } else {
+      await this.updateHistoryQualificationForStudent(idStudent, idCourse, idTeacher, requestQualificationDto);
     }
+    return <response.ResponseGenericDto>{
+      message: 'Processo exitoso',
+      operation: `::${FnQualificationService.name}::execute`,
+      data: {
+        isRemoveTeacherToList: true
+      }
+    };
+  }
 
+  private async updateCareerCourseTeacherForStudent(careerCourseTeacherForStudent: schemas.CareerCourseTeacherDocument, idCourse:string, idTeacher: string) {
     const hasQualificationUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
       elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
     );
@@ -62,16 +75,49 @@ export class FnQualificationService {
     careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
 
     await careerCourseTeacherForStudent.save();
+  }
 
-    this.updateUniversityTeacherQualification(idCourse, idTeacher, requestQualificationDto);
+  private async updateHistoryQualificationForStudent(idStudent: string, idCourse: string, idTeacher: string, requestQualificationDto: any) {
+    const idStudentMongoose = mongoose.Types.ObjectId(idStudent);
+    const idCourseMongoose =  mongoose.Types.ObjectId(idCourse);
+    const idTeacherMongoose =  mongoose.Types.ObjectId(idTeacher);
 
-    return <response.ResponseGenericDto>{
-      message: 'Processo exitoso',
-      operation: `::${FnQualificationService.name}::execute`,
-      data: {
-        isRemoveTeacherToList: true
-      }
-    };
+    const historyQualificationStudent = await this.historyQualificationStudent.findOne({ 
+      idStudent: idStudentMongoose,
+      idCourse: idCourseMongoose,
+      idTeacher: idTeacherMongoose,
+      hasQualification: true
+    });
+    
+    if(!historyQualificationStudent && historyQualificationStudent.hasComment) {
+      throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
+        `QUALIFICATION_NOT_EXISTS_STUDENT`
+      );
+    }
+    
+    if(historyQualificationStudent) {
+      await this.historyQualificationStudent.create({
+        idStudent: idStudentMongoose,
+        idCourse: idCourseMongoose,
+        idTeacher: idTeacherMongoose,
+        hasComment: false,
+        hasQualification: true,
+        auditProperties: {
+          status: {
+            code: 1,
+            description: 'REGISTER'
+          },
+          dateCreate: new Date(),
+          dateUpdate: null,
+          userCreate: 'STUDENT',
+          userUpdate: null,
+          recordActive: true
+        }
+      });
+
+      this.updateUniversityTeacherQualification(idCourse, idTeacher, requestQualificationDto);
+    }
+
   }
 
   private async updateUniversityTeacherQualification(

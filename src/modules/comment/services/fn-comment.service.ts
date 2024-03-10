@@ -17,7 +17,9 @@ export class FnCommentService {
     @InjectModel(schemas.CareerCourseTeacher.name)
     private readonly careerCourseTeacherModel: mongoose.Model<schemas.CareerCourseTeacherDocument>,
     @InjectModel(schemas.UniversityTeacher.name)
-    private readonly universityTeacherModel: mongoose.Model<schemas.UniversityTeacherDocument>
+    private readonly universityTeacherModel: mongoose.Model<schemas.UniversityTeacherDocument>,
+    @InjectModel(schemas.HistoryQualificationStudent.name)
+    private readonly historyQualificationStudent: mongoose.Model<schemas.HistoryQualificationStudentDocument>
   ) {}
 
   async execute(idCourse: string, idTeacher: string, userDecorator: any, comment: string) {
@@ -48,6 +50,29 @@ export class FnCommentService {
       return this.createCommentInCourseTeacher(student, idTeacher, idCourse, comment);
     }
 
+    const idStudentMongoose = mongoose.Types.ObjectId(idStudent);
+    const idCourseMongoose =  mongoose.Types.ObjectId(idCourse);
+    const idTeacherMongoose =  mongoose.Types.ObjectId(idTeacher);
+
+    const historyQualificationStudent = await this.historyQualificationStudent.findOne({ 
+      idStudent: idStudentMongoose,
+      idCourse: idCourseMongoose,
+      idTeacher: idTeacherMongoose,
+      hasQualification: true,
+      hasComment: true
+    });
+
+    if(!historyQualificationStudent) {
+      throw new exception.NotExistStudentCareerCourseTeacherCustomException(
+        `QUALIFICATION_NOT_EXISTS_STUDENT`
+      );
+    }
+
+    historyQualificationStudent.hasComment = true;
+    historyQualificationStudent.auditProperties.dateUpdate = new Date();
+    historyQualificationStudent.auditProperties.userUpdate = "STUDENT";
+    await historyQualificationStudent.save();
+    
     const studentComment = await this.generateStudentComments(student, comment);
     teacherCourseComment.students.push(studentComment);
     await teacherCourseComment.save();
@@ -116,27 +141,29 @@ export class FnCommentService {
     });
 
     if (!careerCourseTeacherForStudent) {
-      throw new exception.NotExistStudentCareerCourseTeacherCustomException(
+      /*throw new exception.NotExistStudentCareerCourseTeacherCustomException(
         `QUALIFICATION_NOT_EXISTS_STUDENT`
+      );*/
+
+      const hasCommentUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
+        elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
       );
+  
+      hasCommentUpdate.hasComment = true;
+  
+      careerCourseTeacherForStudent.pendingToQualification =
+        careerCourseTeacherForStudent.pendingToQualification.filter(
+          elemento => elemento._id != hasCommentUpdate._id
+        );
+  
+      this.logger.debug(
+        `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
+      );
+  
+      await careerCourseTeacherForStudent.save();
+
     }
 
-    const hasCommentUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
-      elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
-    );
-
-    hasCommentUpdate.hasComment = true;
-
-    careerCourseTeacherForStudent.pendingToQualification =
-      careerCourseTeacherForStudent.pendingToQualification.filter(
-        elemento => elemento._id != hasCommentUpdate._id
-      );
-
-    this.logger.debug(
-      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
-    );
-
-    await careerCourseTeacherForStudent.save();
   }
 
   private async updateTeacherCourseCommentIncrement(idTeacher: string, idCourse: string) {
