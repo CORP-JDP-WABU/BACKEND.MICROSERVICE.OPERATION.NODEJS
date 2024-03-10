@@ -74,7 +74,7 @@ export class FnQualificationService {
 
     careerCourseTeacherForStudent.manyQualification = careerCourseTeacherForStudent.pendingToQualification.length;
     careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
-    
+
     this.logger.debug(
       `::updateCareerCourseTeacherForStudent::careerCourseTeacherForStudent::manyQualification::${careerCourseTeacherForStudent.manyQualification}`
     );
@@ -82,6 +82,10 @@ export class FnQualificationService {
   }
 
   private async updateHistoryQualificationForStudent(idStudent: string, idCourse: string, idTeacher: string, requestQualificationDto: any) {
+    this.logger.debug(
+      `::updateHistoryQualificationForStudent::start`
+    );
+
     const idStudentMongoose = mongoose.Types.ObjectId(idStudent);
     const idCourseMongoose =  mongoose.Types.ObjectId(idCourse);
     const idTeacherMongoose =  mongoose.Types.ObjectId(idTeacher);
@@ -116,12 +120,17 @@ export class FnQualificationService {
       this.updateUniversityTeacherQualification(idCourse, idTeacher, requestQualificationDto);
     } else {
       if(historyQualificationStudent.hasComment) {
+        this.logger.warn(
+          `::updateHistoryQualificationForStudent::historyQualificationStudent::${historyQualificationStudent.hasQualification}-${historyQualificationStudent.hasComment}`
+        );
         throw new exceptions.NotExistStudentCareerCourseTeacherCustomException(
           `QUALIFICATION_NOT_EXISTS_STUDENT`
         );
       }
     }
-
+    this.logger.debug(
+      `::updateHistoryQualificationForStudent::end`
+    );
   }
 
   private async updateUniversityTeacherQualification(
