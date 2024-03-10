@@ -29,7 +29,7 @@ jobs:
         echo "SERVICE_TCP_PORT=40004" >> .env
         echo "SERVICE_BASE_PATH=/api" >> .env
         echo "SERVICE_HTTP_THROTTLE_TTL=60" >> .env
-        echo "SERVICE_HTTP_THROTTLE_LIMIT=10" >> .env
+        echo "SERVICE_HTTP_THROTTLE_LIMIT=100" >> .env
         echo "SWAGGER_BASE_PATH=/api/microservice-operation" >> .env
         echo "DATABASE_MONGO_HOSTNAME=${{ secrets.ENV_DATABASE_MONGO_HOSTNAME }}" >> .env
         echo "DATABASE_MONGO_USER=${{ secrets.ENV_DATABASE_MONGO_USER }}" >> .env

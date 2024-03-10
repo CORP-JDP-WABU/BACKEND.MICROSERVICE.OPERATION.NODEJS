@@ -60,7 +60,7 @@ export class FnQualificationService {
     hasQualificationUpdate.hasQualification = true;
 
     this.logger.debug(
-      `::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`
+      `::updateCareerCourseTeacherForStudent::pendingToQualification::before::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );
 
     careerCourseTeacherForStudent.pendingToQualification =
@@ -69,12 +69,14 @@ export class FnQualificationService {
       );
 
     this.logger.debug(
-      `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
+      `::updateCareerCourseTeacherForStudent::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );
 
     careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
     careerCourseTeacherForStudent.manyQualification = careerCourseTeacherForStudent.pendingToQualification.length;
-
+    this.logger.debug(
+      `::updateCareerCourseTeacherForStudent::careerCourseTeacherForStudent::manyQualification::${careerCourseTeacherForStudent.manyQualification}`
+    );
     await careerCourseTeacherForStudent.save();
   }
 
