@@ -73,6 +73,7 @@ export class FnQualificationService {
     );
 
     careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
+    careerCourseTeacherForStudent.manyQualification = careerCourseTeacherForStudent.pendingToQualification.length;
 
     await careerCourseTeacherForStudent.save();
   }
