@@ -23,7 +23,6 @@ export class CommentController {
   constructor(private readonly fnCommentService: services.FnCommentService) {}
 
   @UseGuards(ThrottlerGuard)
-  @Throttle()
   @Patch('/course/:idCourse/teacher/:idTeacher')
   @ApiCreatedResponse({
     description: 'The register has been successfully comment.',

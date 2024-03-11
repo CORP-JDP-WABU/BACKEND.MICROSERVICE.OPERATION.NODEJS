@@ -26,7 +26,6 @@ export class QualificationController {
   ) {}
 
   @UseGuards(ThrottlerGuard)
-  @Throttle()
   @Patch('/course/:idCourse/teacher/:idTeacher/ignorant')
   @ApiCreatedResponse({
     description: 'The register ignorant has been successfully qualification.',
@@ -52,7 +51,6 @@ export class QualificationController {
   }
 
   @UseGuards(ThrottlerGuard)
-  @Throttle()
   @Patch('/course/:idCourse/teacher/:idTeacher')
   @ApiCreatedResponse({
     description: 'The register has been successfully qualification.',

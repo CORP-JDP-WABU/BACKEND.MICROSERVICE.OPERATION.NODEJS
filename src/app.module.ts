@@ -40,10 +40,6 @@ import { AnalitycModule } from './modules/analytic/analityc.module';
   ],
   controllers: [AppController],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    }
   ]
 })
 export class AppModule {}
