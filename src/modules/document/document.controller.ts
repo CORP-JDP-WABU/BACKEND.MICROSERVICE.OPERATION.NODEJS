@@ -85,21 +85,21 @@ export class DocumentController {
     );
   }
 
-  @Get('/upload/university/:idUniversity/course/:idCourse/:skipe')
+  @Get('/university/:idUniversity/course/:idCourse/:skipe')
   @ApiCreatedResponse({
-    description: 'The upload document has been successfully qualification.',
+    description: 'The find document has been successfully.',
     type: response.ResponseGenericDto
   })
   @ApiConflictResponse({
-    description: 'The upload document has been successfully qualification.',
+    description: 'The find document has been successfully.',
     type: null
   })
   @ApiConflictResponse({
-    description: 'The upload document has been failed qualification.',
+    description: 'The find document has been failed.',
     type: null
   })
   @ApiInternalServerErrorResponse({
-    description: 'The register ignorant has been failed by qualification.'
+    description: 'The find document has been failed.'
   })
   findAllWithPagination(
     @Param('idUniversity') idUniversity: string,
