@@ -42,7 +42,14 @@ export class FnFindDocumentService {
                 { $limit: limit }
             ]);
 
-            return documents;
+            return <response.ResponseGenericDto>{
+                message: 'Processo exitoso',
+                operation: `::${FnFindDocumentService.name}::execute`,
+                data: {
+                  documents,
+                  totalDocument: documents.length
+                }
+              };
         } catch (error) {
             
         }
