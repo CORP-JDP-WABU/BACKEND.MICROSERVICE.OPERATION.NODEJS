@@ -11,3 +11,9 @@ export class NotExistStudentCustomException extends ConflictException {
     super(`No existe un estudiante con dichos parametros [${customCode}`);
   }
 }
+
+export class NotExistsTeacherCustomException extends ConflictException {
+  constructor(customCode: string) {
+    super(`No existe un profesor con dichos parametros [${customCode}`);
+  }
+}

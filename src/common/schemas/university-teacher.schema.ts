@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { AuditPropertiesSchema } from './audit-properties.schema';
 
 export type UniversityTeacherDocument = UniversityTeacher & mongoose.Document;
 
@@ -16,6 +17,9 @@ export class UniversityTeacher {
 
   @Prop({ type: String })
   fullName: string;
+
+  @Prop({ type: String })
+  searchText: string;
 
   @Prop({ type: String })
   code: string;
@@ -87,6 +91,12 @@ export class UniversityTeacher {
       }
     ];
   }[];
+
+  @Prop({
+    type: AuditPropertiesSchema,
+    default: () => new AuditPropertiesSchema()
+  })
+  auditProperties: AuditPropertiesSchema;
 }
 
 export const UniversityTeacherSchema = SchemaFactory.createForClass(UniversityTeacher);

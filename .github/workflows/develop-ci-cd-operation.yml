@@ -79,5 +79,5 @@ jobs:
           docker rm microservice-operation
           docker rmi ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs
           docker pull ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
-          docker run -d -p 4004:4004 -p 40004:40004 --name microservice-operation --net=microservices_network --ip=172.18.0.3 ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
+          docker run -d -p 4004:4004 -p 40004:40004 -e NODE_ENV=development --name microservice-operation --net=microservices_network --ip=172.18.0.3 ${{ secrets.DOCKER_USERNAME }}/corp-jdp-wabu-backend-microservice-operation-nodejs:latest
           '

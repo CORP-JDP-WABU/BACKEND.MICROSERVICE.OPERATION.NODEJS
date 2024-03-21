@@ -51,17 +51,17 @@ export class FnCommentService {
     }
 
     const idStudentMongoose = mongoose.Types.ObjectId(idStudent);
-    const idCourseMongoose =  mongoose.Types.ObjectId(idCourse);
-    const idTeacherMongoose =  mongoose.Types.ObjectId(idTeacher);
+    const idCourseMongoose = mongoose.Types.ObjectId(idCourse);
+    const idTeacherMongoose = mongoose.Types.ObjectId(idTeacher);
 
-    const historyQualificationStudent = await this.historyQualificationStudent.findOne({ 
+    const historyQualificationStudent = await this.historyQualificationStudent.findOne({
       idStudent: idStudentMongoose,
       idCourse: idCourseMongoose,
       idTeacher: idTeacherMongoose,
       hasQualification: true
     });
 
-    if(historyQualificationStudent && historyQualificationStudent.hasComment) {
+    if (historyQualificationStudent && historyQualificationStudent.hasComment) {
       throw new exception.NotExistStudentCareerCourseTeacherCustomException(
         `QUALIFICATION_NOT_EXISTS_STUDENT`
       );
@@ -69,7 +69,7 @@ export class FnCommentService {
 
     historyQualificationStudent.hasComment = true;
     historyQualificationStudent.auditProperties.dateUpdate = new Date();
-    historyQualificationStudent.auditProperties.userUpdate = "STUDENT";
+    historyQualificationStudent.auditProperties.userUpdate = 'STUDENT';
     await historyQualificationStudent.save();
 
     const studentComment = await this.generateStudentComments(student, comment);
@@ -140,26 +140,23 @@ export class FnCommentService {
     });
 
     if (careerCourseTeacherForStudent) {
-
       const hasCommentUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
         elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
       );
-  
+
       hasCommentUpdate.hasComment = true;
-  
+
       careerCourseTeacherForStudent.pendingToQualification =
         careerCourseTeacherForStudent.pendingToQualification.filter(
           elemento => elemento._id != hasCommentUpdate._id
         );
-  
+
       this.logger.debug(
         `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
       );
-  
+
       await careerCourseTeacherForStudent.save();
-
     }
-
   }
 
   private async updateTeacherCourseCommentIncrement(idTeacher: string, idCourse: string) {

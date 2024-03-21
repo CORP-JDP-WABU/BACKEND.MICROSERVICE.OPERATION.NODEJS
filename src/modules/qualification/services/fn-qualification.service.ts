@@ -6,7 +6,6 @@ import * as exceptions from 'src/exception';
 import * as response from 'src/common/dto';
 import * as request from '../dto';
 import { QUALIFICATION } from 'src/common/const/comon.const';
-import { stringify } from 'querystring';
 
 @Injectable()
 export class FnQualificationService {
@@ -36,12 +35,21 @@ export class FnQualificationService {
       'pendingToQualification.course.idCourse': idCourse,
       'pendingToQualification.teacher.idTeacher': idTeacher
     });
-    
+
     if (careerCourseTeacherForStudent) {
-      await this.updateCareerCourseTeacherForStudent(careerCourseTeacherForStudent, idCourse, idTeacher);
+      await this.updateCareerCourseTeacherForStudent(
+        careerCourseTeacherForStudent,
+        idCourse,
+        idTeacher
+      );
       this.updateUniversityTeacherQualification(idCourse, idTeacher, requestQualificationDto);
     } else {
-      await this.updateHistoryQualificationForStudent(idStudent, idCourse, idTeacher, requestQualificationDto);
+      await this.updateHistoryQualificationForStudent(
+        idStudent,
+        idCourse,
+        idTeacher,
+        requestQualificationDto
+      );
     }
     return <response.ResponseGenericDto>{
       message: 'Processo exitoso',
@@ -52,7 +60,11 @@ export class FnQualificationService {
     };
   }
 
-  private async updateCareerCourseTeacherForStudent(careerCourseTeacherForStudent: schemas.CareerCourseTeacherDocument, idCourse:string, idTeacher: string) {
+  private async updateCareerCourseTeacherForStudent(
+    careerCourseTeacherForStudent: schemas.CareerCourseTeacherDocument,
+    idCourse: string,
+    idTeacher: string
+  ) {
     const hasQualificationUpdate = careerCourseTeacherForStudent.pendingToQualification.find(
       elemento => elemento.course.idCourse == idCourse && elemento.teacher.idTeacher == idTeacher
     );
@@ -72,7 +84,8 @@ export class FnQualificationService {
       `::updateCareerCourseTeacherForStudent::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );
 
-    careerCourseTeacherForStudent.manyQualification = careerCourseTeacherForStudent.pendingToQualification.length;
+    careerCourseTeacherForStudent.manyQualification =
+      careerCourseTeacherForStudent.pendingToQualification.length;
     careerCourseTeacherForStudent.pendingToQualification.push(hasQualificationUpdate);
 
     this.logger.debug(
@@ -81,23 +94,26 @@ export class FnQualificationService {
     await careerCourseTeacherForStudent.save();
   }
 
-  private async updateHistoryQualificationForStudent(idStudent: string, idCourse: string, idTeacher: string, requestQualificationDto: any) {
-    this.logger.debug(
-      `::updateHistoryQualificationForStudent::start`
-    );
+  private async updateHistoryQualificationForStudent(
+    idStudent: string,
+    idCourse: string,
+    idTeacher: string,
+    requestQualificationDto: any
+  ) {
+    this.logger.debug(`::updateHistoryQualificationForStudent::start`);
 
     const idStudentMongoose = mongoose.Types.ObjectId(idStudent);
-    const idCourseMongoose =  mongoose.Types.ObjectId(idCourse);
-    const idTeacherMongoose =  mongoose.Types.ObjectId(idTeacher);
+    const idCourseMongoose = mongoose.Types.ObjectId(idCourse);
+    const idTeacherMongoose = mongoose.Types.ObjectId(idTeacher);
 
-    const historyQualificationStudent = await this.historyQualificationStudent.findOne({ 
+    const historyQualificationStudent = await this.historyQualificationStudent.findOne({
       idStudent: idStudentMongoose,
       idCourse: idCourseMongoose,
       idTeacher: idTeacherMongoose,
       hasQualification: true
     });
-    
-    if(!historyQualificationStudent) {
+
+    if (!historyQualificationStudent) {
       await this.historyQualificationStudent.create({
         idStudent: idStudentMongoose,
         idCourse: idCourseMongoose,
@@ -119,7 +135,7 @@ export class FnQualificationService {
 
       this.updateUniversityTeacherQualification(idCourse, idTeacher, requestQualificationDto);
     } else {
-      if(historyQualificationStudent.hasComment) {
+      if (historyQualificationStudent.hasComment) {
         this.logger.warn(
           `::updateHistoryQualificationForStudent::historyQualificationStudent::${historyQualificationStudent.hasQualification}-${historyQualificationStudent.hasComment}`
         );
@@ -128,9 +144,7 @@ export class FnQualificationService {
         );
       }
     }
-    this.logger.debug(
-      `::updateHistoryQualificationForStudent::end`
-    );
+    this.logger.debug(`::updateHistoryQualificationForStudent::end`);
   }
 
   private async updateUniversityTeacherQualification(

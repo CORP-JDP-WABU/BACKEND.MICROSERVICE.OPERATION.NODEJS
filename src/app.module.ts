@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import configuration from './config/configuration';
 import { QualificationModule } from './modules/qualification/qualification.module';
 import { CryptoModule } from './common/crypto/crypto.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { AnalitycModule } from './modules/analytic/analityc.module';
+import { DocumentModule } from './modules/document/document.module';
 
 @Module({
   imports: [
@@ -35,11 +35,12 @@ import { AnalitycModule } from './modules/analytic/analityc.module';
     }),
     QualificationModule,
     CommentModule,
+    DocumentModule,
     CryptoModule,
     AnalitycModule
   ],
   controllers: [AppController],
-  providers: [
-  ]
+  providers: [],
+  exports: []
 })
 export class AppModule {}

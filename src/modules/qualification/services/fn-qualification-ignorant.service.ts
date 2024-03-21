@@ -69,7 +69,7 @@ export class FnQualificationIgnorantService {
       );
 
     careerCourseTeacherForStudent.pendingToQualification.push(hasIgnorantUpdate);
-    
+
     this.logger.debug(
       `::pendingToQualification::after::${careerCourseTeacherForStudent.pendingToQualification.length}`
     );

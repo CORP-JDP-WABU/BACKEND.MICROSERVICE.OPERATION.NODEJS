@@ -43,10 +43,13 @@ export class HttpCustomException implements ExceptionFilter {
           rules: message
         });
       case HttpStatus.CONFLICT:
-        const customMessage = message.split(' [')[0];
+        const messageSpli = message.split(' [');
+        const customMessage = messageSpli[0];
+        const customCode = messageSpli[1];
         return response.send({
           statusCode,
-          message: customMessage
+          message: customMessage,
+          errorCode: customCode
         });
       default:
         return response.send({

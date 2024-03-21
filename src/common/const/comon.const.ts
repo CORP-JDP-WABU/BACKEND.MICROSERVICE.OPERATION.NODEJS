@@ -18,3 +18,13 @@ export const QUALIFICATION = {
     ASSISTANCE: 6
   }
 };
+
+export const DOCUMENT_TYPE_SPANISH = {
+  SYLLABLES: 'silabos',
+  EXAMS: 'examenes',
+  WORKED: 'trabajosfinales',
+  EXCERCIES: 'ejercicios',
+  PRESENTATIONS: 'presentaciones',
+  SUMMARY: 'resumenes',
+  NOTES: 'contenidodeclases'
+};

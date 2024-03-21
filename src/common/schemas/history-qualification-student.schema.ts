@@ -6,7 +6,6 @@ export type HistoryQualificationStudentDocument = HistoryQualificationStudent & 
 
 @Schema({ collection: 'HistoryQualificationStudent', autoIndex: true })
 export class HistoryQualificationStudent {
-
   @Prop({ type: mongoose.Types.ObjectId })
   idStudent: mongoose.Types.ObjectId;
 
@@ -29,4 +28,6 @@ export class HistoryQualificationStudent {
   auditProperties: AuditPropertiesSchema;
 }
 
-export const HistoryQualificationStudentSchema = SchemaFactory.createForClass(HistoryQualificationStudent);
+export const HistoryQualificationStudentSchema = SchemaFactory.createForClass(
+  HistoryQualificationStudent
+);

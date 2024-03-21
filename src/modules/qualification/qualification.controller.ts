@@ -1,5 +1,5 @@
 import { Controller, Body, UseGuards, Patch, Param } from '@nestjs/common';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
