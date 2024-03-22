@@ -33,7 +33,7 @@ import { UserDecoratorInterface } from 'src/common/interfaces';
 export class DocumentController {
   constructor(
     private readonly fnFindDocumentService: services.FnFindDocumentService,
-    private readonly fnUploadDocumentService: services.FnUploadDocumentService  
+    private readonly fnUploadDocumentService: services.FnUploadDocumentService
   ) {}
 
   @ApiBearerAuth()
@@ -81,7 +81,7 @@ export class DocumentController {
       files,
       documentType,
       uploadDocumentDto.cicleName,
-      userDecorator,
+      userDecorator
     );
   }
 
@@ -109,16 +109,20 @@ export class DocumentController {
     @Param('documentType') documentType: string,
     @Param('skipe') skipe: string,
     @Query('search') search: string,
+    @UserDecorator() userDecorator: UserDecoratorInterface
   ) {
     return this.fnFindDocumentService.execute(
       idUniversity,
       idCourse,
       documentType,
       parseInt(skipe),
-      search
+      search,
+      userDecorator
     );
   }
 
+  @ApiBearerAuth()
+  @UseGuards(SecurityGuard, ThrottlerGuard)
   @Get('/university/:idUniversity/course/:idCourse/document/:idDocument')
   @ApiCreatedResponse({
     description: 'The find document has been successfully.',
@@ -138,13 +142,14 @@ export class DocumentController {
   findDocument(
     @Param('idUniversity') idUniversity: string,
     @Param('idCourse') idCourse: string,
-    @Param('idDocument') documentType: string
+    @Param('idDocument') documentType: string,
+    @UserDecorator() userDecorator: UserDecoratorInterface
   ) {
     return this.fnFindDocumentService.executeFindDoc(
       idUniversity,
       idCourse,
-      documentType
+      documentType,
+      userDecorator
     );
-  }  
-
+  }
 }

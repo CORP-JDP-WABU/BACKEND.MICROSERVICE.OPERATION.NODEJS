@@ -49,11 +49,14 @@ export class FnUploadDocumentService {
     files: Express.Multer.File[],
     documentType: string,
     cicleName: string,
-    userDecorator: any,
+    userDecorator: any
   ) {
-    
-    const idDocuemnts = []
+    const idDocuemnts = [];
     const { idStudent } = userDecorator;
+
+    if (idUniversity.toString() !== userDecorator.idUniversity) {
+      throw new exceptions.UnahutorizedUniversityCustomException('UNAUTHORIZED_UNIVERSITY');
+    }
 
     const [universityPromise, universityCoursePromise, studentPromise] = await Promise.all([
       this.universityModel.findById(idUniversity, { name: 1 }),
@@ -68,9 +71,9 @@ export class FnUploadDocumentService {
 
     const key = this.generateS3RouteForUpload(universityName, courseName, documentType);
 
-    let documents : any [] = [];
-    let personalizedKeys: string [] = [];
-    
+    const documents: any[] = [];
+    const personalizedKeys: string[] = [];
+
     for (const file of files) {
       const idDocument = mongoose.Types.ObjectId();
       const extension = path.extname(file.originalname);
@@ -256,42 +259,36 @@ export class FnUploadDocumentService {
 
   private async updateDocumentProfileCourse(idCourse: mongoose.Types.ObjectId) {
     try {
-      this.logger.debug(`::start::updateDocumentProfileCourse::${idCourse}`);  
-      const [
-        universityCourseDocs,
-        profileCourse  
-      ] = await Promise.all(
-        [
-          this.universityCourseDocModel.find({ "course.idCourse": idCourse }),
-          this.profileCourseModel.findById(idCourse)
-        ]
-      )
+      this.logger.debug(`::start::updateDocumentProfileCourse::${idCourse}`);
+      const [universityCourseDocs, profileCourse] = await Promise.all([
+        this.universityCourseDocModel.find({ 'course.idCourse': idCourse }),
+        this.profileCourseModel.findById(idCourse)
+      ]);
 
-      if(profileCourse) {
-
-        let allDocuments = [];
+      if (profileCourse) {
+        const allDocuments = [];
         for (const universityCourseDoc of universityCourseDocs) {
-          allDocuments.push(universityCourseDoc.document)
+          allDocuments.push(universityCourseDoc.document);
         }
 
-        const countDocuments : any = this.countDocumentsByType(allDocuments);
+        const countDocuments: any = this.countDocumentsByType(allDocuments);
         profileCourse.documents = countDocuments;
         profileCourse.save();
-        
-        this.logger.debug(`::updateDocumentProfileCourse::documents::${JSON.stringify(countDocuments)}`); 
+
+        this.logger.debug(
+          `::updateDocumentProfileCourse::documents::${JSON.stringify(countDocuments)}`
+        );
       }
-      
-      this.logger.debug(`::end::updateDocumentProfileCourse::${idCourse}`)
-    
+
+      this.logger.debug(`::end::updateDocumentProfileCourse::${idCourse}`);
     } catch (error) {
       this.logger.error(`::updateDocumentProfileCourse::error`, error);
-      throw new exceptions.UpdateProfileCourseException(); 
+      throw new exceptions.UpdateProfileCourseException();
     }
-    
   }
 
   private countDocumentsByType(documents: any[]) {
-    const expectedTypes : string[] = Object.values(enums.DocumentTypeEnum).filter(
+    const expectedTypes: string[] = Object.values(enums.DocumentTypeEnum).filter(
       value => typeof value === 'string'
     );
     const countsMap = new Map<string, number>();
@@ -310,7 +307,7 @@ export class FnUploadDocumentService {
     countsMap.forEach((count, documentType) => {
       result[documentType.toLowerCase()] = count;
     });
-  
+
     return result;
   }
 

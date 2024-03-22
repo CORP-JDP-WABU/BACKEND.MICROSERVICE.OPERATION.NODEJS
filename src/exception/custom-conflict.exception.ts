@@ -17,3 +17,9 @@ export class NotExistsTeacherCustomException extends ConflictException {
     super(`No existe un profesor con dichos parametros [${customCode}`);
   }
 }
+
+export class UnahutorizedUniversityCustomException extends ConflictException {
+  constructor(customCode: string) {
+    super(`Usted no esta authorizado para realizar consultas en esta universidad [${customCode}`);
+  }
+}

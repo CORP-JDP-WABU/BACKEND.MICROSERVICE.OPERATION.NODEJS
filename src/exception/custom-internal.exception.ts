@@ -23,3 +23,15 @@ export class UpdateProfileCourseException extends InternalServerErrorException {
     super(`${UpdateProfileCourseException.name}`);
   }
 }
+
+export class FindPaginationDocumentsException extends InternalServerErrorException {
+  constructor() {
+    super(`${FindPaginationDocumentsException.name}`);
+  }
+}
+
+export class FindDocumentsException extends InternalServerErrorException {
+  constructor() {
+    super(`${FindDocumentsException.name}`);
+  }
+}

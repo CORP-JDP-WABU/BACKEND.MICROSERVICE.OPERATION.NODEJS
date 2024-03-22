@@ -20,18 +20,17 @@ export class UniversityCourseDoc {
 
   @Prop(
     raw({
-          student: {
-            idStudent: mongoose.Types.ObjectId,
-            fullName: String,
-            profileUrl: String,
-          },
-          searchName: String,
-          originalName: String,
-          documentType: String,
-          extension: String,
-          url: String
-        }
-    )
+      student: {
+        idStudent: mongoose.Types.ObjectId,
+        fullName: String,
+        profileUrl: String
+      },
+      searchName: String,
+      originalName: String,
+      documentType: String,
+      extension: String,
+      url: String
+    })
   )
   document: {
     student: {
