@@ -85,7 +85,7 @@ export class DocumentController {
     );
   }
 
-  @Get('/university/:idUniversity/course/:idCourse/:skipe')
+  @Get('/university/:idUniversity/course/:idCourse/:documentType/:skipe')
   @ApiCreatedResponse({
     description: 'The find document has been successfully.',
     type: response.ResponseGenericDto
@@ -104,12 +104,14 @@ export class DocumentController {
   findAllWithPagination(
     @Param('idUniversity') idUniversity: string,
     @Param('idCourse') idCourse: string,
+    @Param('documentType') documentType: string,
     @Param('skipe') skipe: string,
     @Query('search') search: string,
   ) {
     return this.fnFindDocumentService.execute(
       idUniversity,
       idCourse,
+      documentType,
       parseInt(skipe),
       search
     );

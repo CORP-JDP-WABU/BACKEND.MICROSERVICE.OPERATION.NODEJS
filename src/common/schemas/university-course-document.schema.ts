@@ -13,20 +13,13 @@ export class UniversityCourseDoc {
   course: { idCourse: mongoose.Types.ObjectId; name: string; searchText: string };
 
   @Prop({ type: String })
+  teacher: string;
+
+  @Prop({ type: String })
   cicleName: string;
 
   @Prop(
     raw({
-      type: []
-    })
-  )
-  teachers: string[];
-
-  @Prop(
-    raw({
-      type: [
-        {
-          _id: mongoose.Types.ObjectId,
           student: {
             idStudent: mongoose.Types.ObjectId,
             fullName: String,
@@ -38,11 +31,9 @@ export class UniversityCourseDoc {
           extension: String,
           url: String
         }
-      ]
-    })
+    )
   )
-  documents: {
-    _id: mongoose.Types.ObjectId;
+  document: {
     student: {
       idStudent: mongoose.Types.ObjectId;
       fullName: string;
@@ -53,7 +44,7 @@ export class UniversityCourseDoc {
     documentType: string;
     extension: string;
     url: string;
-  }[];
+  };
 
   @Prop({
     type: AuditPropertiesSchema,

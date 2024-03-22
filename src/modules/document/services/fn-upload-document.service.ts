@@ -271,7 +271,7 @@ export class FnUploadDocumentService {
 
         let allDocuments = [];
         for (const universityCourseDoc of universityCourseDocs) {
-          allDocuments.push(...universityCourseDoc.documents)
+          allDocuments.push(universityCourseDoc.document)
         }
 
         const countDocuments : any = this.countDocumentsByType(allDocuments);

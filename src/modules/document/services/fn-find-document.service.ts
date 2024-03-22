@@ -20,34 +20,42 @@ export class FnFindDocumentService {
 
     }
 
-    async execute(idUniversity: string, idCourse: string, skipe: number, search: string) {
+    async execute(idUniversity: string, idCourse: string, documentType: string, skipe: number, search: string) {
         this.logger.debug(`::start::execute::`);
         try {
             const limit = 10;
 
-            const skip = (skipe - 1) * limit;
-
-            const documents = await this.universityCourseDocModel.aggregate([
-                { $unwind: "$documents" },
-                /*{ $match: {
-                    "idUniversity": mongoose.Types.ObjectId(idUniversity),
-                    "course.idCourse": mongoose.Types.ObjectId(idCourse) 
-                } },*/
-                { $project: {
-                    course: 1,
-                    cicleName: 1,
-                    documents: 1
-                }},
-                { $skip: skip }, 
-                { $limit: limit }
-            ]);
-
+            const countCourseDocuments = this.universityCourseDocModel.countDocuments({
+                idUniversity: mongoose.Types.ObjectId(idUniversity),
+                idCourse: mongoose.Types.ObjectId(idCourse),
+                "document.documentType": documentType.toUpperCase(),
+                $or: [
+                    { searchName: { $regex: search, $options: 'mi' } },
+                    { cicleName: { $regex: search, $options: 'mi' } }
+                ]
+            });
+            
+            const courseDocumentPromise = this.universityCourseDocModel
+            .find(
+              {
+                idUniversity: mongoose.Types.ObjectId(idUniversity),
+                idCourse: mongoose.Types.ObjectId(idCourse),
+                "document.documentType": documentType.toUpperCase(),
+                $or: [
+                    { searchName: { $regex: search, $options: 'mi' } },
+                    { cicleName: { $regex: search, $options: 'mi' } }
+                ]
+              }
+            )
+            .skip(skipe > 0 ? (skipe - 1) * limit : 0)
+            .limit(limit);
+            this.logger.debug(`::end::execute::${countCourseDocuments}`);
             return <response.ResponseGenericDto>{
                 message: 'Processo exitoso',
                 operation: `::${FnFindDocumentService.name}::execute`,
                 data: {
-                  documents,
-                  totalDocument: documents.length
+                  documents: courseDocumentPromise,
+                  totalDocument: countCourseDocuments
                 }
               };
         } catch (error) {
