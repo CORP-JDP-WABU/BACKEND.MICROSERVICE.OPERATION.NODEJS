@@ -85,6 +85,8 @@ export class DocumentController {
     );
   }
 
+  @ApiBearerAuth()
+  @UseGuards(SecurityGuard, ThrottlerGuard)
   @Get('/university/:idUniversity/course/:idCourse/:documentType/:skipe')
   @ApiCreatedResponse({
     description: 'The find document has been successfully.',
@@ -116,5 +118,33 @@ export class DocumentController {
       search
     );
   }
+
+  @Get('/university/:idUniversity/course/:idCourse/document/:idDocument')
+  @ApiCreatedResponse({
+    description: 'The find document has been successfully.',
+    type: response.ResponseGenericDto
+  })
+  @ApiConflictResponse({
+    description: 'The find document has been successfully.',
+    type: null
+  })
+  @ApiConflictResponse({
+    description: 'The find document has been failed.',
+    type: null
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'The find document has been failed.'
+  })
+  findDocument(
+    @Param('idUniversity') idUniversity: string,
+    @Param('idCourse') idCourse: string,
+    @Param('idDocument') documentType: string
+  ) {
+    return this.fnFindDocumentService.executeFindDoc(
+      idUniversity,
+      idCourse,
+      documentType
+    );
+  }  
 
 }
