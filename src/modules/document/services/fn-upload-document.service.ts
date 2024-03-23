@@ -50,7 +50,7 @@ export class FnUploadDocumentService {
     documentType: string,
     cicleName: string,
     userDecorator: any
-  ) {
+  ): Promise<response.ResponseGenericDto> {
     const idDocuemnts = [];
     const { idStudent } = userDecorator;
 
@@ -137,7 +137,7 @@ export class FnUploadDocumentService {
     universityName: string,
     courseName: string,
     documentType: string
-  ) {
+  ): string {
     try {
       const normalizeUniversityName = this.normalizeText(universityName);
       const normalizeCourseName = this.normalizeText(courseName);
@@ -222,7 +222,7 @@ export class FnUploadDocumentService {
     teacher: schemas.UniversityTeacher,
     documents: any[],
     personalizedKeys: string[]
-  ) {
+  ): Promise<void> {
     try {
       await this.universityCourseDocModel.create({
         idUniversity: mongoose.Types.ObjectId(idUniversity),
