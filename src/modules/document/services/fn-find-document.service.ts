@@ -116,7 +116,7 @@ export class FnFindDocumentService {
         message: 'Processo exitoso',
         operation: `::${FnFindDocumentService.name}::execute`,
         data: {
-          idDocuemnt: universityCourseDoc.id,
+          idDocument: universityCourseDoc.id,
           originalName: document.originalName,
           extension: document.extension,
           url: document.url,
