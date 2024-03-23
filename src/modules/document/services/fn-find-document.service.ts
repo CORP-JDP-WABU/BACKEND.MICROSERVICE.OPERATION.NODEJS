@@ -52,13 +52,6 @@ export class FnFindDocumentService {
               { 'document.searchName': { $regex: search, $options: 'mi' } },
               { cicleName: { $regex: search, $options: 'mi' } }
             ]
-          },
-          {
-            _id: 1,
-            document: 1,
-            course: 1,
-            teacher: 1,
-            cicleName: 1
           }
         )
         .skip(skipe > 0 ? (skipe - 1) * limit : 0)
