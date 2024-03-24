@@ -50,7 +50,7 @@ export class FnFindDocumentService {
       const courseDocumentPromise = await this.universityCourseDocModel.find(query)
         .skip(skipe > 0 ? (skipe - 1) * limit : 0)
         .limit(limit);
-        
+
       this.logger.debug(`::end::execute::${countCourseDocuments}`);
       return <response.ResponseGenericDto>{
         message: 'Processo exitoso',
@@ -69,7 +69,8 @@ export class FnFindDocumentService {
                 name: x.course.name
               },
               cicleName: x.cicleName,
-              teacher: x.teacher
+              teacher: x.teacher,
+              createdAt: this.formatterDate(x.auditProperties.dateCreate)
             };
           }),
           totalDocs: countCourseDocuments
@@ -108,17 +109,30 @@ export class FnFindDocumentService {
           originalName: document.originalName,
           extension: document.extension,
           url: document.url,
+          teacher: universityCourseDoc.teacher,
           cicleName: universityCourseDoc.cicleName,
+          course: {
+            idCourse: universityCourseDoc.course.idCourse,
+            name: universityCourseDoc.course.name
+          },
           student: {
             idStudent: student.idStudent,
             fullName: student.fullName,
             profileUrl: student.profileUrl
-          }
+          },
+          createdAt: this.formatterDate(universityCourseDoc.auditProperties.dateCreate)
         }
       };
     } catch (error) {
       this.logger.error(`::execute::error`, error);
       throw new exceptions.FindDocumentsException();
     }
+  }
+
+  private formatterDate(createdAt: Date) {
+    const day = createdAt.getDate().toString().padStart(2, '0');
+    const month = (createdAt.getMonth() + 1).toString().padStart(2, '0');
+    const year = createdAt.getFullYear().toString().slice(-2);
+    return `${day}/${month}/${year}`;
   }
 }
