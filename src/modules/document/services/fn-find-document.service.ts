@@ -29,33 +29,28 @@ export class FnFindDocumentService {
       throw new exceptions.UnahutorizedUniversityCustomException('UNAUTHORIZED_UNIVERSITY');
     }
 
+    let query = {
+      idUniversity: mongoose.Types.ObjectId(idUniversity),
+      'course.idCourse': mongoose.Types.ObjectId(idCourse),
+      $or: [
+        { 'document.searchName': { $regex: search, $options: 'mi' } },
+        { cicleName: { $regex: search, $options: 'mi' } }
+      ]
+    }
+
+    if(documentType.toUpperCase() !== 'ALL') {
+      query['document.documentType'] = documentType.toUpperCase()
+    }
+    
     try {
       const limit = 10;
 
-      const countCourseDocuments = await this.universityCourseDocModel.countDocuments({
-        idUniversity: mongoose.Types.ObjectId(idUniversity),
-        'course.idCourse': mongoose.Types.ObjectId(idCourse),
-        'document.documentType': documentType.toUpperCase(),
-        $or: [
-          { 'document.searchName': { $regex: search, $options: 'mi' } },
-          { cicleName: { $regex: search, $options: 'mi' } }
-        ]
-      });
+      const countCourseDocuments = await this.universityCourseDocModel.countDocuments(query);
 
-      const courseDocumentPromise = await this.universityCourseDocModel
-        .find(
-          {
-            idUniversity: mongoose.Types.ObjectId(idUniversity),
-            'course.idCourse': mongoose.Types.ObjectId(idCourse),
-            'document.documentType': documentType.toUpperCase(),
-            $or: [
-              { 'document.searchName': { $regex: search, $options: 'mi' } },
-              { cicleName: { $regex: search, $options: 'mi' } }
-            ]
-          }
-        )
+      const courseDocumentPromise = await this.universityCourseDocModel.find(query)
         .skip(skipe > 0 ? (skipe - 1) * limit : 0)
         .limit(limit);
+        
       this.logger.debug(`::end::execute::${countCourseDocuments}`);
       return <response.ResponseGenericDto>{
         message: 'Processo exitoso',
