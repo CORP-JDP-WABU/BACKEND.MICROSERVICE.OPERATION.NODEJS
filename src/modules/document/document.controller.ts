@@ -127,7 +127,7 @@ export class DocumentController {
     name: 'idDocument',
     required: true
   })
-  @Get('/university/:idUniversity/course/:idCourse/document/:idDocument')
+  @Get('/university/:idUniversity/course/:idCourse')
   @ApiCreatedResponse({
     description: 'The find document has been successfully.',
     type: response.ResponseGenericDto
