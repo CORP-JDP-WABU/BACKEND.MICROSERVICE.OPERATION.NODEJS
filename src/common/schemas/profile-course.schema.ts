@@ -25,28 +25,30 @@ export class ProfileCourse {
           _id: mongoose.Types.ObjectId,
           firstName: String,
           lastName: String,
-          averageQualification: Number
-        }
-      ]
-    })
+          averageQualification: Number,
+          photoUrl: String
+        },
+      ],
+    }),
   )
   teachers: {
     _id: mongoose.Types.ObjectId;
     firstName: string;
     lastName: string;
     averageQualification: number;
+    photoUrl: string;
   }[];
 
   @Prop(
     raw({
-      exams: Number,
-      excercies: Number,
-      notes: Number,
-      summary: Number,
-      presentations: Number,
-      worked: Number,
-      syllables: Number
-    })
+        exams: Number,
+        excercies: Number,
+        notes: Number,
+        summary: Number,
+        presentations: Number,
+        worked: Number,
+        syllables: Number
+    }),
   )
   documents: {
     exams: number;
@@ -60,9 +62,11 @@ export class ProfileCourse {
 
   @Prop({
     type: AuditPropertiesSchema,
-    default: () => new AuditPropertiesSchema()
+    default: () => new AuditPropertiesSchema(),
   })
   auditProperties: AuditPropertiesSchema;
+
 }
 
-export const ProfileCourseSchema = SchemaFactory.createForClass(ProfileCourse);
+export const ProfileCourseSchema =
+  SchemaFactory.createForClass(ProfileCourse);
