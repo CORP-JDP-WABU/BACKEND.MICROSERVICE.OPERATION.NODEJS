@@ -123,6 +123,10 @@ export class DocumentController {
 
   @ApiBearerAuth()
   @UseGuards(SecurityGuard, ThrottlerGuard)
+  @ApiQuery({
+    name: 'idDocument',
+    required: true
+  })
   @Get('/university/:idUniversity/course/:idCourse/document/:idDocument')
   @ApiCreatedResponse({
     description: 'The find document has been successfully.',
@@ -142,13 +146,13 @@ export class DocumentController {
   findDocument(
     @Param('idUniversity') idUniversity: string,
     @Param('idCourse') idCourse: string,
-    @Param('idDocument') documentType: string,
+    @Query('idDocument') idDocument: string,
     @UserDecorator() userDecorator: UserDecoratorInterface
   ) {
     return this.fnFindDocumentService.executeFindDoc(
       idUniversity,
       idCourse,
-      documentType,
+      idDocument,
       userDecorator
     );
   }
